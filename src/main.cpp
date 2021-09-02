@@ -1,19 +1,24 @@
 #include <ncurses.h>
 #include <iostream>
 
+#include "../include/file.hpp"
+
+using namespace std;
+
 int main()
 {
   int key_command;
-  
+
   while (1)
   {
+
     initscr();
     printw("Hello World !!!");
     refresh();
     key_command = getch();
     endwin();
 
-    // ESC Key
+    //ESC Key
     if(key_command == 27){
       break;
     }
