@@ -5,14 +5,12 @@
 int main()
 {
   int key_command;
-  
+  initscr();
+  printw("Hello World !!!");
   while (1)
   {
-    initscr();
-    printw("Hello World !!!");
     refresh();
-    key_command = getch();
-    initial_menu();
+    key_command = initial_menu(); // COLS e LINES iniciadas após initscr()
 
     // ESC Key
     if(key_command == 27){
