@@ -1,23 +1,37 @@
 #include <ncurses.h>
 #include <iostream>
+#include <string.h>
+#include "game.hpp"
 
-int main()
+int main(int argc, char *argv[])
 {
-  int key_command;
-  
-  while (1)
-  {
-    initscr();
-    printw("Hello World !!!");
-    refresh();
-    key_command = getch();
-    endwin();
+	int key_command;
+	char msg[] = "Just a string";
+	int row, col;
 
-    // ESC Key
-    if(key_command == 27){
-      break;
-    }
-  }
+	hangman::Game *g = new hangman::Game();
 
-  return 0;
+	g->Round();
+
+	//   while (1)
+	//   {
+	//     initscr();
+
+	//     getmaxyx(stdscr, row, col);
+	//     mvprintw(row / 2, (col - strlen(msg)) / 2, "%s", msg);
+	//     mvprintw(row - 2, 0, "This screen has %d rows and %d columns\n", row, col);
+	//     printw("Try resizing your window(if possible) and then run this program again");
+	//     refresh();
+	//     key_command = getch();
+
+	//     endwin();
+
+	//     // ESC Key
+	//     if (key_command == 27)
+	//     {
+	//       break;
+	//     }
+	//   }
+
+	return 0;
 }
