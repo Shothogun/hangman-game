@@ -23,6 +23,27 @@ namespace hangman
 
     int GuessLetter(std::string letter);
 
+    int GuessWord(std::string word);
+    void setPlayerAmount(int amount);
+
+    void RoundPlayersInit();
+    void setPlayersName(std::vector<std::string> names);
+    void setPlayersLife();
+
+    // Adds 1 at players index. If reachs the utmost,
+    // resets to 0.
+    void UpdatePlayerTurn();
+
+    // Gets current player name
+    std::string getPlayerName();
+
+    // Gets current player life amount
+    int getPlayerLife();
+
+    // Makes current player lose life
+    // Return if lost the turn.
+    bool loseLife(int lost_life);
+
   private:
     std::string guess_word_{""};
     std::string render_guess_word;
@@ -39,9 +60,14 @@ namespace hangman
     // Amount of rounds per game
     int rounds_{3};
 
-    std::vector<hangman::Player> game_players_;
+    // Player turn's id
+    int player_turn_;
 
-    std::vector<int> players_points_;
+    // Amount of players left on the game
+    int n_players_left_;
+
+    std::vector<hangman::Player *>
+        game_players_;
   };
 }
 

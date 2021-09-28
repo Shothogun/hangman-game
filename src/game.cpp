@@ -2,36 +2,102 @@
 
 void hangman::Game::Round()
 {
-  int n_players_left = this->players_amount_;
-
-  // Amount of characters from guess_word right
-  // from the last guess
+  // Amount of characters from guess right
+  // from the last guess. If not found, it's -1.
   int n_right_guess = 0;
 
-  // Amount of characters from guessed
-  // from the guess_word
+  // Amount of characters from the guess.
   int total_right_guess = 0;
 
-  std::string guess_letter;
+  // Letter guess
+  std::string guess;
+
+  // Command choice by user. Assumes L or W
+  char choice;
+
+  // Guess word points. If 0, right guess,
+  // else is -2 life
+  int word_guess_points = -1;
+
+  // Initialize with the 1sr player
+  this->player_turn_ = 0;
 
   // DEBUG
   this->guess_word_ = "hangman";
+
+  bool lost = false;
+
+  const int WRONG = -1;
+
+  this->n_players_left_ = this->players_amount_;
 
   std::string render_guess_word(this->guess_word_.length(), '_');
   this->render_guess_word = render_guess_word;
 
   // Receive user commands, render, and compute
-  while (total_right_guess < this->guess_word_.length())
-  // while (n_players_left > 2)
+  while (this->n_players_left_ >= 2)
   {
-    std::cin >> guess_letter;
-    //
-    // GuessWord();
+    std::cout << this->getPlayerName() << "\n";
+    std::cout << "Life: " << this->getPlayerLife() << "\n";
 
-    n_right_guess = GuessLetter(guess_letter);
-    std::cout << this->render_guess_word << std::endl;
-    total_right_guess += n_right_guess;
+    std::cout
+        << this->getPlayerName()
+        << " have your play choice! (W or L)\n";
+
+    // Choice Reading
+    std::cin >> choice;
+
+    // Guess a letter
+    if (choice == 'L' || choice == 'l')
+    {
+      std::cout << this->getPlayerName()
+                << ", guess a letter!\n";
+
+      std::cin >> guess;
+
+      n_right_guess = GuessLetter(guess);
+
+      std::cout << this->render_guess_word << std::endl;
+
+      if (n_right_guess == WRONG)
+      {
+        lost = false;
+        lost = this->loseLife(1);
+
+        if (lost)
+        {
+          std::cout << "Oh, " << this->getPlayerName()
+                    << " lost! :(\n";
+        }
+      }
+    }
+
+    // Guess a word
+    else if (choice == 'W' || choice == 'w')
+    {
+      std::cout << this->getPlayerName()
+                << ", guess a word!\n";
+
+      std::cin >> guess;
+
+      word_guess_points = GuessWord(guess);
+    }
+
+    else
+    {
+      std::cout << "Invalid choice. "
+                << this->getPlayerName()
+                << ". Choose 'W' or 'L',";
+
+      continue;
+    }
+
+    UpdatePlayerTurn();
+
+    std::cout << "\n\n\n";
   }
+
+  std::cout << this->getPlayerName() << ", U are the WINNER!!! :D\n";
 }
 
 int hangman::Game::GuessLetter(std::string letter)
@@ -50,12 +116,12 @@ int hangman::Game::GuessLetter(std::string letter)
       // no letter guessed
       if (this->render_guess_word[found] != '_')
       {
+        std::cout << "Already guessed letter! Skip turn.\n";
         return 0;
       }
 
       counter++;
       this->render_guess_word.replace(found, 1, letter);
-      std::cout << "Found at: " << found << " " << this->guess_word_[found] << '\n';
       found = this->guess_word_.find(letter, found + 1);
     }
   }
@@ -63,8 +129,87 @@ int hangman::Game::GuessLetter(std::string letter)
   // Not found
   else
   {
-    std::cout << "Not found" << '\n';
+    counter = -1;
   }
 
   return counter;
+}
+
+int hangman::Game::GuessWord(std::string word)
+{
+  if (!this->guess_word_.compare(word))
+  {
+    std::cout << "Right guess! :)\n";
+    return 0;
+  }
+
+  else
+  {
+    std::cout << "Wrong guess! :(\n";
+    return -2;
+  }
+}
+
+void hangman::Game::RoundPlayersInit()
+{
+  for (size_t i = 0; i < this->players_amount_; i++)
+  {
+    hangman::Player *p = new Player();
+    this->game_players_.push_back(p);
+    this->game_players_[i]->setPoint(0);
+    this->game_players_[i]->setRoundLost(false);
+  }
+}
+
+void hangman::Game::setPlayersName(std::vector<std::string> names)
+{
+  for (size_t i = 0; i < this->players_amount_; i++)
+  {
+    this->game_players_[i]->setName(names[i]);
+  }
+}
+
+void hangman::Game::setPlayersLife()
+{
+  for (size_t i = 0; i < this->players_amount_; i++)
+  {
+    this->game_players_[i]->setLife(this->lifes_);
+  }
+}
+
+void hangman::Game::UpdatePlayerTurn()
+{
+  do
+  {
+    this->player_turn_++;
+    this->player_turn_ %= this->players_amount_;
+  } while (this->game_players_[this->player_turn_]->getRoundLost());
+}
+
+std::string hangman::Game::getPlayerName()
+{
+  return this->game_players_[this->player_turn_]->getName();
+}
+
+int hangman::Game::getPlayerLife()
+{
+  return this->game_players_[this->player_turn_]->getLife();
+}
+
+void hangman::Game::setPlayerAmount(int amount)
+{
+  this->players_amount_ = amount;
+}
+
+bool hangman::Game::loseLife(int lost_life)
+{
+  this->game_players_[this->player_turn_]->loseLife(lost_life);
+  if (!this->game_players_[this->player_turn_]->getLife())
+  {
+    this->n_players_left_--;
+    this->game_players_[this->player_turn_]->loseRound();
+    return true;
+  }
+
+  return false;
 }

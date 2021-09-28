@@ -11,6 +11,16 @@ int main(int argc, char *argv[])
 
 	hangman::Game *g = new hangman::Game();
 
+	std::vector<std::string> names;
+
+	names.push_back("Goku");
+	names.push_back("Rogerio Ceni");
+	names.push_back("Joel Santana");
+
+	g->setPlayerAmount(3);
+	g->RoundPlayersInit();
+	g->setPlayersName(names);
+	g->setPlayersLife();
 	g->Round();
 
 	//   while (1)
