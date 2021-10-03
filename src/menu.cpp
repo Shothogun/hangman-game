@@ -11,6 +11,7 @@ class Button {
 		void write_button(string str, int line);
 		void refresh() {wrefresh(this->win);};
 		void erase() {werase(this->win);};
+		int isThisButton(int x, int y);
 		Button(int starty, int startx, int height, int width);
 		~Button() {delwin(this->win);};
 };
@@ -20,7 +21,7 @@ Button::Button(int starty, int startx, int height, int width) {
 	this->starty = starty;
 	this->height = height;
 	this->width = width;
-	win = newwin(height+2, width+2, starty-1, startx-1);
+	this->win = newwin(height+2, width+2, starty-1, startx-1);
 }
 
 void Button::write_button(string str, int line) {
@@ -36,7 +37,14 @@ void Button::write_button(string str, int line) {
 void Button::create_border() {
 	box(this->win, 0, 0);
 	wrefresh(this->win);
-};
+}
+
+int Button::isThisButton(int x, int y) {
+	if (x >= this->startx && x <= this->startx + this->width && y >= this->starty && y <= this->starty + this->height){
+		return 1;
+	}
+	else return 0;
+}
 
 struct WinData {
 	int startx, starty;
@@ -74,25 +82,28 @@ int initial_menu(){
 	main_box_data.width = 80;
 	main_box_data.startx = 8;
 	main_box_data.starty = 3;
-	separation = int(main_box_data.width/n_choices);
+	separation = int(main_box_data.width/n_choices) + 1;
 
 	main_box = newwin(main_box_data.height+2, main_box_data.width+2, main_box_data.starty-1, main_box_data.startx-1);
 	box(main_box, 0 , 0);
 	wrefresh(main_box);
 
 	//write_menu (menu, separation, main_box_data);
-	Button novo_jogo(15 + main_box_data.starty, int(separation/10) + main_box_data.startx, 2, int(separation*4/5));
-	novo_jogo.create_border();
-	novo_jogo.write_button("Novo jogo", 0);
-	novo_jogo.write_button("(1)", 1);
-	Button ranking(15 + main_box_data.starty, int(11*separation/10) + main_box_data.startx, 2, int(separation*4/5));
-	ranking.create_border();
-	ranking.write_button("Ranking", 0);
-	ranking.write_button("(2)", 1);
-	Button add(15 + main_box_data.starty, int(21*separation/10) + main_box_data.startx, 2, int(separation*4/5));
-	add.create_border();
-	add.write_button("Adicao de palavras", 0);
-	add.write_button("(3)", 1);
+	Button b1 (15 + main_box_data.starty, int(separation/10) + main_box_data.startx, 2, int(separation*4/5));
+	b1.create_border();
+	b1.write_button("Novo jogo", 0);
+	b1.write_button("(1)", 1);
+	Button b2 (15 + main_box_data.starty, int(11*separation/10) + main_box_data.startx, 2, int(separation*4/5));
+	b2.create_border();
+	b2.write_button("Ranking", 0);
+	b2.write_button("(2)", 1);
+	Button b3 (15 + main_box_data.starty, int(21*separation/10) + main_box_data.startx, 2, int(separation*4/5));
+	b3.create_border();
+	b3.write_button("Adicao de palavras", 0);
+	b3.write_button("(3)", 1);
+	Button bexit (3 + main_box_data.starty, main_box_data.width - 10 + main_box_data.startx, 1, 6);
+	bexit.create_border();
+	bexit.write_button("Sair", 0);
 
 	mousemask(ALL_MOUSE_EVENTS, NULL);
 
@@ -121,7 +132,18 @@ int initial_menu(){
 				if(getmouse(&event) == OK){
 					if(event.bstate & BUTTON1_PRESSED || event.bstate & BUTTON1_CLICKED){
 						wrefresh(main_box);
-						mvwprintw(stdscr, 0, 0, (to_string(event.x)+ ' ' + to_string(event.y) + ' ').c_str());
+						if (b1.isThisButton(event.x, event.y)){
+							mvwprintw(stdscr, 0, 0, "Novo jogo");
+						}
+						else if (b2.isThisButton(event.x, event.y)){
+							mvwprintw(stdscr, 0, 0, "Ranking");
+						}
+						else if(b3.isThisButton(event.x, event.y)){
+							mvwprintw(stdscr, 0, 0, "Adicao de palavras");
+						}
+						else if (bexit.isThisButton(event.x, event.y)){
+							ch = 27;
+						}
 					}
 				}
 				break;
