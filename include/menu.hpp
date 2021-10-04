@@ -16,10 +16,12 @@ class Box {
 		int startx, starty;
 		int height, width;
 		void create_border();
-		void write_button(string str, int line);
+		void write_center(string str, int line);
+		void write_begin(string str, int line);
 		void refresh() {wrefresh(this->win);};
 		void erase() {werase(this->win);};
 		int isThisButton(int x, int y);
+		string read_str(int line, int position);
 		Box(int starty, int startx, int height, int width);
 		~Box();
 };
