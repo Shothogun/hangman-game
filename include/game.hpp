@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "player.hpp"
+#include <random>
 
 namespace hangman
 {
@@ -19,7 +20,7 @@ namespace hangman
         : guess_word_(guess_word), lifes_(lifes), rounds_(rounds),
           players_amount_(players_amount){};
 
-    void Round();
+    int Round();
 
     int GuessLetter(std::string letter);
 
@@ -40,6 +41,8 @@ namespace hangman
     // Gets current player life amount
     int getPlayerLife();
 
+    int getPlayerID();
+
     // Makes current player lose life
     // Return if lost the turn.
     bool loseLife(int lost_life);
@@ -52,7 +55,7 @@ namespace hangman
     // word
     int guess_word_size_;
     // How many lives each player have
-    int lifes_{3};
+    int lifes_{4};
     // How many player per turn
     int players_amount_{4};
     // Winner player id's on the game

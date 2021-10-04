@@ -15,6 +15,11 @@ void hangman::Player::setName(std::string name)
   this->name_ = name;
 }
 
+void hangman::Player::setID(int id)
+{
+  this->id_ = id;
+}
+
 int hangman::Player::getLife()
 {
   return this->life_;
@@ -28,6 +33,11 @@ int hangman::Player::getPoint()
 std::string hangman::Player::getName()
 {
   return this->name_;
+}
+
+int hangman::Player::getID()
+{
+  return this->id_;
 }
 
 void hangman::Player::loseLife(int lost_life)

@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-void hangman::Game::Round()
+int hangman::Game::Round()
 {
   // Amount of characters from guess right
   // from the last guess. If not found, it's -1.
@@ -35,7 +35,7 @@ void hangman::Game::Round()
   this->render_guess_word = render_guess_word;
 
   // Receive user commands, render, and compute
-  while (this->n_players_left_ >= 2)
+  while (this->n_players_left_ >= 2 && word_guess_points != 0)
   {
     std::cout << this->getPlayerName() << "\n";
     std::cout << "Life: " << this->getPlayerLife() << "\n";
@@ -57,6 +57,7 @@ void hangman::Game::Round()
 
       n_right_guess = GuessLetter(guess);
 
+      std::cout << "\n\n";
       std::cout << this->render_guess_word << std::endl;
 
       if (n_right_guess == WRONG)
@@ -81,6 +82,16 @@ void hangman::Game::Round()
       std::cin >> guess;
 
       word_guess_points = GuessWord(guess);
+
+      if (word_guess_points)
+      {
+        lost = this->loseLife(word_guess_points);
+      }
+
+      else
+      {
+        break;
+      }
     }
 
     else
@@ -98,6 +109,7 @@ void hangman::Game::Round()
   }
 
   std::cout << this->getPlayerName() << ", U are the WINNER!!! :D\n";
+  return this->getPlayerID();
 }
 
 int hangman::Game::GuessLetter(std::string letter)
@@ -146,7 +158,7 @@ int hangman::Game::GuessWord(std::string word)
   else
   {
     std::cout << "Wrong guess! :(\n";
-    return -2;
+    return 3;
   }
 }
 
@@ -155,9 +167,15 @@ void hangman::Game::RoundPlayersInit()
   for (size_t i = 0; i < this->players_amount_; i++)
   {
     hangman::Player *p = new Player();
+
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<double> dist(1.0, 1000000.0);
+
     this->game_players_.push_back(p);
     this->game_players_[i]->setPoint(0);
     this->game_players_[i]->setRoundLost(false);
+    this->game_players_[i]->setID(dist(mt));
   }
 }
 
@@ -194,6 +212,11 @@ std::string hangman::Game::getPlayerName()
 int hangman::Game::getPlayerLife()
 {
   return this->game_players_[this->player_turn_]->getLife();
+}
+
+int hangman::Game::getPlayerID()
+{
+  return this->game_players_[this->player_turn_]->getID();
 }
 
 void hangman::Game::setPlayerAmount(int amount)

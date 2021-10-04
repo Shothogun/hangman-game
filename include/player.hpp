@@ -25,7 +25,11 @@ namespace hangman
     void setRoundLost(bool state);
     void loseRound();
 
+    void setID(int id);
+    int getID();
+
   private:
+    int id_;
     std::string name_;
     int life_;
     int point_;
