@@ -10,7 +10,7 @@ int main()
   while (1)
   {
     refresh();
-    key_command = initial_menu(); // COLS e LINES iniciadas após initscr()
+    key_command = start_interface(); // COLS e LINES iniciadas após initscr()
 
     // ESC Key
     if(key_command == 27){
