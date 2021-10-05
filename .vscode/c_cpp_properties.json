@@ -1,0 +1,22 @@
+{
+    "env": {
+        "myDefaultIncludePath": [
+            "/home/shothogun/Documents/Projects/hangman-game/", 
+            "/home/shothogun/Documents/Projects/hangman-game/include"]
+      },
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "/home/shothogun/Documents/Projects/hangman-game/include"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "cStandard": "c11",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
