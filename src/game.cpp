@@ -187,8 +187,9 @@ void hangman::Game::setPlayersName(std::vector<std::string> names)
   }
 }
 
-void hangman::Game::setPlayersLife()
+void hangman::Game::setPlayersLife(int amount)
 {
+  this->lifes_ = amount;
   for (size_t i = 0; i < this->players_amount_; i++)
   {
     this->game_players_[i]->setLife(this->lifes_);
