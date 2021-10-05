@@ -184,7 +184,7 @@ int new_game_menu(WinData main_box_data, int *p_n_players, int* p_n_rounds, int*
 int start_interface(){
 	int page = 0;
 	int number_players = 1, number_rounds = 1, number_lifes = 1;
-	string *names;
+	string *names = nullptr;
 	WINDOW *main_box;
 	WinData main_box_data;
 
@@ -221,6 +221,9 @@ int start_interface(){
 		}
 	}
 
+	if (names) {
+		delete[] names;
+	}
 	delwin(main_box);
 
 	return page;
