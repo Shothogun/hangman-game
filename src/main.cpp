@@ -1,6 +1,6 @@
 #include <ncurses.h>
 #include <iostream>
-#include "menu.hpp"
+#include "interface.hpp"
 #include <string.h>
 #include "game.hpp"
 
