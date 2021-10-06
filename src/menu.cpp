@@ -61,31 +61,111 @@ namespace hangman {
 		else return 0;
 	}
 
-	GameInterface::GameInterface(WinData main_box_data){
+	void GameInterface::initialization(WinData main_box_data){
 		int margin_y = 3, margin_x = 2;
+		int hang_space = 5, hang_height = 6;
+		int but_height = 15;
+		int separation = int(main_box_data.width/2);
+
+		if (this->word_max_size + hang_space*2 > main_box_data.width) this->word_max_size = main_box_data.width - hang_space*2;
+
 		this->current_player = new Box(margin_y + main_box_data.starty, main_box_data.startx + margin_x, 2, main_box_data.width - 2*margin_x);
-		//this->cur_word = new Box();
-		//this->button_word = new Box();
-		//this->button_letter = new Box();
+		this->cur_word = new Box(main_box_data.starty + int((main_box_data.height - hang_height)/2), main_box_data.startx + int(main_box_data.width- this->word_max_size)/2 - hang_space, 
+								 hang_height, this->word_max_size + hang_space*2);
+		this->button_letter = new Box(main_box_data.starty + but_height, int(1*separation/3) + main_box_data.startx, 2, int(separation*1/2));
+		this->button_word = new Box(main_box_data.starty + but_height, int(7*separation/6) + main_box_data.startx, 2, int(separation*1/2));
 		//this->guess = new Box();
 		//this->msgs = new Box();
 	}
 
+	GameInterface::GameInterface(WinData main_box_data, int word_max_size){
+		this->word_max_size = word_max_size;
+		this->initialization(main_box_data);
+	}
+
+	GameInterface::GameInterface(WinData main_box_data){
+		this->initialization(main_box_data);
+	}
+
 	GameInterface::~GameInterface(){
-		//this->current_player->~Box();
 		delete this->current_player;
-		//delete this->cur_word;
-		//delete this->button_word;
-		//delete this->button_letter;
+		delete this->cur_word;
+		delete this->button_word;
+		delete this->button_letter;
 		//delete this->guess;
 		//delete this->msgs;
 	}
 
 	void GameInterface::display_player(string name, int life){
+		this->current_player->erase();
 		wattron(this->current_player->win, A_BOLD|A_UNDERLINE);
 		this->current_player->write_center(name, 0);
 		wattroff(this->current_player->win, A_UNDERLINE);
 		this->current_player->write_center("Vidas: " + to_string(life), 1);
+	}
+
+	void GameInterface::display_cur_word(string word){
+		this->cur_word->erase();
+		this->cur_word->write_begin("____ ", 0);
+		this->cur_word->write_begin("|  | ", 1);
+		this->cur_word->write_begin("|  O ", 2);
+		this->cur_word->write_begin("| /|\\", 3);
+		this->cur_word->write_begin("| / \\", 4);
+		wattron(this->cur_word->win, A_BOLD);
+		this->cur_word->write_center(word, 4);
+	}
+
+	void GameInterface::display_buttons(){
+		this->button_word->erase();
+		this->button_letter->erase();
+		button_letter->create_border();
+		button_letter->write_center("Adivinhar letra", 0);
+		button_letter->write_center("(1)", 1);
+		button_word->create_border();
+		button_word->write_center("Adivinhar palavra", 0);
+		button_word->write_center("(2)", 1);
+	}
+
+	int GameInterface::wait_buttons(){
+		int ch = 0, next_page = 0;
+
+		MEVENT event;
+		mousemask(ALL_MOUSE_EVENTS, NULL);
+		
+		while(ch != 27){
+			ch = getch();
+			switch(ch){
+				case '1':
+					next_page = 1;
+					ch = 27;
+					break;
+				case '2':
+					next_page = 2;
+					ch = 27;
+					break;
+				case KEY_MOUSE:
+					if(getmouse(&event) == OK){
+						if(event.bstate & BUTTON1_PRESSED || event.bstate & BUTTON1_CLICKED){
+							if (this->button_letter->isThisButton(event.x, event.y)){
+								next_page = 1;
+								ch = 27;
+							}
+							else if (this->button_word->isThisButton(event.x, event.y)){
+								next_page = 2;
+								ch = 27;
+							}
+						}
+					}
+					break;
+				case 27:
+					next_page = 27;
+					break;
+				default:
+					break;
+			}
+		}
+
+		return next_page;
 	}
 
 	int initial_menu(WinData main_box_data){
@@ -126,17 +206,14 @@ namespace hangman {
 			ch = getch();
 			switch(ch){
 				case '1':
-					mvwprintw(stdscr, 0, 0, "Novo jogo");
 					next_page = 1;
 					ch = 27;
 					break;
 				case '2':
-					mvwprintw(stdscr, 0, 0, "Ranking");
 					next_page = 2;
 					ch = 27;
 					break;
 				case '3':
-					mvwprintw(stdscr, 0, 0, "Adicao de palavras");
 					next_page = 3;
 					ch = 27;
 					break;
@@ -250,6 +327,8 @@ namespace hangman {
 					g->setPlayersLife(number_lifes);
 
 					game_interface.display_player("Giordano", 5);
+					game_interface.display_cur_word("_______");
+					game_interface.display_buttons();
 
 					while(page != 27){
 						page = getch();
