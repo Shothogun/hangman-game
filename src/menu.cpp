@@ -61,6 +61,33 @@ namespace hangman {
 		else return 0;
 	}
 
+	GameInterface::GameInterface(WinData main_box_data){
+		int margin_y = 3, margin_x = 2;
+		this->current_player = new Box(margin_y + main_box_data.starty, main_box_data.startx + margin_x, 2, main_box_data.width - 2*margin_x);
+		//this->cur_word = new Box();
+		//this->button_word = new Box();
+		//this->button_letter = new Box();
+		//this->guess = new Box();
+		//this->msgs = new Box();
+	}
+
+	GameInterface::~GameInterface(){
+		this->current_player->~Box();
+		delete this->current_player;
+		//delete this->cur_word;
+		//delete this->button_word;
+		//delete this->button_letter;
+		//delete this->guess;
+		//delete this->msgs;
+	}
+
+	void GameInterface::display_player(string name, int life){
+		wattron(this->current_player->win, A_BOLD|A_UNDERLINE);
+		this->current_player->write_center(name, 0);
+		wattroff(this->current_player->win, A_UNDERLINE);
+		this->current_player->write_center("Vidas: " + to_string(life), 1);
+	}
+
 	int initial_menu(WinData main_box_data){
 		int separation;
 		int ch, next_page = 0;
@@ -93,7 +120,7 @@ namespace hangman {
 
 		mousemask(ALL_MOUSE_EVENTS, NULL);
 
-		ch = getch();
+		ch = 0;
 		
 		while(ch != 27){
 			ch = getch();
@@ -187,8 +214,8 @@ namespace hangman {
 		int number_players = 1, number_rounds = 1, number_lifes = 1;
 		vector<string> names;
 		WINDOW *main_box;
-		WinData main_box_data;
 
+		WinData main_box_data;
 		main_box_data.height = 20;
 		main_box_data.width = 80;
 		main_box_data.startx = 8;
@@ -205,6 +232,8 @@ namespace hangman {
 		box(main_box, 0 , 0);
 		wrefresh(main_box);
 
+		GameInterface game_interface (main_box_data);
+
 		while(page != 27){
 			switch(page){
 				case 0:
@@ -212,10 +241,16 @@ namespace hangman {
 					break;
 				case 1:
 					page = new_game_menu(main_box_data, &number_players, &number_rounds, &number_lifes, &names);
+					if(number_players <= 0) number_players = 1;
+					if(number_rounds <= 0) number_rounds = 1;
+					if(number_lifes <= 0) number_lifes = 1;
+
 					g->setPlayerAmount(number_players);
 					g->RoundPlayersInit();
 					g->setPlayersName(names);
 					g->setPlayersLife(number_lifes);
+
+					game_interface.display_player("Giordano", 5);
 
 					while(page != 27){
 						page = getch();
@@ -229,6 +264,7 @@ namespace hangman {
 		}
 
 		delwin(main_box);
+		endwin();
 
 		return page;
 	}
