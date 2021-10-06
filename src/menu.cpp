@@ -49,6 +49,16 @@ namespace hangman {
 		return str;
 	}
 
+	char Box::read_char(int line, int position) {
+		char c;
+
+		echo();
+		c = mvwgetch(this->win, line + 1, position + 1);
+		noecho();
+
+		return c;
+	}
+
 	void Box::create_border() {
 		box(this->win, 0, 0);
 		wrefresh(this->win);
@@ -66,6 +76,7 @@ namespace hangman {
 		int hang_space = 5, hang_height = 6;
 		int but_height = 15;
 		int separation = int(main_box_data.width/2);
+		int msg_y = 18;
 
 		if (this->word_max_size + hang_space*2 > main_box_data.width) this->word_max_size = main_box_data.width - hang_space*2;
 
@@ -74,8 +85,8 @@ namespace hangman {
 								 hang_height, this->word_max_size + hang_space*2);
 		this->button_letter = new Box(main_box_data.starty + but_height, int(1*separation/3) + main_box_data.startx, 2, int(separation*1/2));
 		this->button_word = new Box(main_box_data.starty + but_height, int(7*separation/6) + main_box_data.startx, 2, int(separation*1/2));
-		//this->guess = new Box();
-		//this->msgs = new Box();
+		this->guess = new Box(main_box_data.starty + but_height, int(1*separation/3) + main_box_data.startx, 1, main_box_data.width - int(1*separation/3) - 1);
+		this->msg = new Box(main_box_data.starty + msg_y, main_box_data.startx + margin_x, 1, main_box_data.width - 2*margin_x);
 	}
 
 	GameInterface::GameInterface(WinData main_box_data, int word_max_size){
@@ -92,8 +103,8 @@ namespace hangman {
 		delete this->cur_word;
 		delete this->button_word;
 		delete this->button_letter;
-		//delete this->guess;
-		//delete this->msgs;
+		delete this->guess;
+		delete this->msg;
 	}
 
 	void GameInterface::display_player(string name, int life){
@@ -115,6 +126,30 @@ namespace hangman {
 		this->cur_word->write_center(word, 4);
 	}
 
+	void GameInterface::display_message(string msg){
+		this->msg->erase();
+		wattron(this->msg->win, A_BOLD|A_STANDOUT);
+		this->msg->write_center(msg, 0);
+	}
+
+	char GameInterface::guess_letter(){
+		string s = "Escreva a letra escolhida: ";
+
+		this->guess->erase();
+		this->guess->write_begin(s, 0);
+
+		return this->guess->read_char(0, s.size());
+	}
+
+	string GameInterface::guess_word(){
+		string s = "Escreva a palavra escolhida: ";
+
+		this->guess->erase();
+		this->guess->write_begin(s, 0);
+
+		return this->guess->read_str(0, s.size());
+	}
+
 	void GameInterface::display_buttons(){
 		this->button_word->erase();
 		this->button_letter->erase();
@@ -124,6 +159,23 @@ namespace hangman {
 		button_word->create_border();
 		button_word->write_center("Adivinhar palavra", 0);
 		button_word->write_center("(2)", 1);
+	}
+
+	void GameInterface::erase_buttons(){
+		this->button_word->erase();
+		this->button_letter->erase();
+		this->button_word->refresh();
+		this->button_letter->refresh();
+	}
+
+	void GameInterface::erase_guess(){
+		this->guess->erase();
+		this->guess->refresh();
+	}
+
+	void GameInterface::erase_message(){
+		this->msg->erase();
+		this->msg->refresh();
 	}
 
 	int GameInterface::wait_buttons(){
@@ -329,6 +381,16 @@ namespace hangman {
 					game_interface.display_player("Giordano", 5);
 					game_interface.display_cur_word("_______");
 					game_interface.display_buttons();
+					game_interface.wait_buttons();
+					game_interface.erase_buttons();
+					game_interface.guess_letter();
+					game_interface.guess_word();
+					game_interface.display_message("Aqui está você, o perdedor HAHA");
+					getch();
+					game_interface.erase_guess();
+					game_interface.erase_message();
+
+
 
 					while(page != 27){
 						page = getch();

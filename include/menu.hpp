@@ -28,6 +28,7 @@ namespace hangman {
 			void erase() {werase(this->win);};
 			int isThisButton(int x, int y);
 			string read_str(int line, int position);
+			char read_char(int line, int position);
 			Box(int starty, int startx, int height, int width);
 			~Box();
 	};
@@ -40,11 +41,17 @@ namespace hangman {
 			Box *button_word;
 			Box *button_letter;
 			Box *guess;
-			Box *msgs;
+			Box *msg;
 			void display_player(string name, int life);
 			void display_cur_word (string word);
 			void display_buttons();
+			void erase_buttons();
 			int wait_buttons();
+			string guess_word();
+			char guess_letter();
+			void erase_guess();
+			void display_message(string msg);
+			void erase_message();
 			GameInterface(WinData main_box_data);
 			GameInterface(WinData main_box_data, int word_max_size);
 			~GameInterface();
