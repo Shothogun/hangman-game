@@ -38,13 +38,10 @@ int hangman::Game::Round(GameInterface* game_interface)
   while (this->n_players_left_ >= 2 && word_guess_points != 0)
   {
     game_interface->display_player(this->getPlayerName(), this->getPlayerLife());
-    //std::cout << this->getPlayerName() << "\n";
-    //std::cout << "Life: " << this->getPlayerLife() << "\n";
 
     game_interface->display_cur_word(this->render_guess_word);
 
     game_interface->display_buttons();
-    //std::cout << this->getPlayerName() << " have your play choice! (W or L)\n";
 
     // Choice Reading
     choice = game_interface->wait_buttons();
@@ -52,18 +49,14 @@ int hangman::Game::Round(GameInterface* game_interface)
     //std::cin >> choice;
 
     // Guess a letter
-    if (choice == 1)//(choice == 'L' || choice == 'l')
+    if (choice == 1)
     {
       guess = std::string(1, game_interface->guess_letter());
       mvwprintw(stdscr, 0, 0, guess.c_str());
-      //std::cout << this->getPlayerName() << ", guess a letter!\n";
-      //std::cin >> guess;
 
       n_right_guess = GuessLetter(guess);
 
       game_interface->display_cur_word(this->render_guess_word);
-      //std::cout << "\n\n";
-      //std::cout << this->render_guess_word << std::endl;
 
       if (n_right_guess == WRONG)
       {
@@ -73,7 +66,6 @@ int hangman::Game::Round(GameInterface* game_interface)
         if (lost)
         {
           game_interface->display_message("Oh, " + this->getPlayerName() + " perdeu!");
-          //std::cout << "Oh, " << this->getPlayerName() << " lost! :(\n";
         }
         else game_interface->display_message("Ops, não tem essa letra!");
       }
@@ -85,9 +77,7 @@ int hangman::Game::Round(GameInterface* game_interface)
     // Guess a word
     else if (choice == 2)//(choice == 'W' || choice == 'w')
     {
-      game_interface->guess_word();
-      //std::cout << this->getPlayerName() << ", guess a word!\n";
-      //std::cin >> guess;
+      guess = game_interface->guess_word();
 
       word_guess_points = GuessWord(guess);
 
@@ -112,15 +102,6 @@ int hangman::Game::Round(GameInterface* game_interface)
         break;
       }
     }
-
-    /*else
-    {
-      std::cout << "Invalid choice. "
-                << this->getPlayerName()
-                << ". Choose 'W' or 'L',";
-
-      continue;
-    }*/
 
     UpdatePlayerTurn();
 
@@ -153,7 +134,6 @@ int hangman::Game::GuessLetter(std::string letter)
       // no letter guessed
       if (this->render_guess_word[found] != '_')
       {
-        //std::cout << "Already guessed letter! Skip turn.\n";
         return 0;
       }
 
@@ -176,14 +156,12 @@ int hangman::Game::GuessWord(std::string word)
 {
   if (!this->guess_word_.compare(word))
   {
-    //std::cout << "Right guess! :)\n";
     this->render_guess_word = word;
     return 0;
   }
 
   else
   {
-    //std::cout << "Wrong guess! :(\n";
     return 3;
   }
 }
