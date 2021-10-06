@@ -72,7 +72,7 @@ namespace hangman {
 	}
 
 	GameInterface::~GameInterface(){
-		this->current_player->~Box();
+		//this->current_player->~Box();
 		delete this->current_player;
 		//delete this->cur_word;
 		//delete this->button_word;
@@ -232,9 +232,8 @@ namespace hangman {
 		box(main_box, 0 , 0);
 		wrefresh(main_box);
 
-		GameInterface game_interface (main_box_data);
-
 		while(page != 27){
+			GameInterface game_interface (main_box_data);
 			switch(page){
 				case 0:
 					page = initial_menu(main_box_data);
@@ -255,6 +254,7 @@ namespace hangman {
 					while(page != 27){
 						page = getch();
 					}
+
 					break;
 				default:
 					getch();
