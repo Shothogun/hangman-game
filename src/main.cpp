@@ -1,5 +1,6 @@
 #include <ncurses.h>
 #include <iostream>
+#include "interface.hpp"
 #include <string.h>
 #include "game.hpp"
 
@@ -17,12 +18,15 @@ int main(int argc, char *argv[])
 	names.push_back("Rogerio Ceni");
 	names.push_back("Joel Santana");
 
-	g->setPlayerAmount(3);
-	g->RoundPlayersInit();
-	g->setPlayersName(names);
-	g->setPlayersLife();
-	g->Round();
+	hangman::start_interface(g);
 
+	//g->setPlayerAmount(3);
+	//g->RoundPlayersInit();
+	//g->setPlayersName(names);
+	//g->setPlayersLife();
+	//g->Round();
+
+	delete g;
 	//   while (1)
 	//   {
 	//     initscr();

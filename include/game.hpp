@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "player.hpp"
+#include "menu.hpp"
 #include <random>
 
 namespace hangman
@@ -20,7 +21,7 @@ namespace hangman
         : guess_word_(guess_word), lifes_(lifes), rounds_(rounds),
           players_amount_(players_amount){};
 
-    int Round();
+    int Round(GameInterface* game_interface);
 
     int GuessLetter(std::string letter);
 
@@ -29,7 +30,7 @@ namespace hangman
 
     void RoundPlayersInit();
     void setPlayersName(std::vector<std::string> names);
-    void setPlayersLife();
+    void setPlayersLife(int amount);
 
     // Adds 1 at players index. If reachs the utmost,
     // resets to 0.
