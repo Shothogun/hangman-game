@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-int hangman::Game::Round(GameInterface* game_interface)
+int hangman::Game::Round(GameInterface *game_interface)
 {
   // Amount of characters from guess right
   // from the last guess. If not found, it's -1.
@@ -15,8 +15,7 @@ int hangman::Game::Round(GameInterface* game_interface)
   // Command choice by user. Assumes L or W
   char choice;
 
-  // Guess word points. If 0, right guess,
-  // else is -3 life
+  // Guess word points
   int word_guess_points = -1;
 
   // Initialize with the 1sr player
@@ -34,8 +33,11 @@ int hangman::Game::Round(GameInterface* game_interface)
   std::string render_guess_word(this->guess_word_.length(), '_');
   this->render_guess_word = render_guess_word;
 
+  int end_condition = 0;
+
   // Receive user commands, render, and compute
-  while (this->n_players_left_ >= 2 && word_guess_points != 0)
+  // If there's still players left and no one guessed the word
+  while (1)
   {
     game_interface->display_player(this->getPlayerName(), this->getPlayerLife());
 
@@ -61,21 +63,24 @@ int hangman::Game::Round(GameInterface* game_interface)
       if (n_right_guess == WRONG)
       {
         lost = false;
-        lost = this->loseLife(1);
+        lost = this->loseLife(letter_life_lose);
 
         if (lost)
         {
           game_interface->display_message("Oh, " + this->getPlayerName() + " perdeu!");
         }
-        else game_interface->display_message("Ops, não tem essa letra!");
+        else
+          game_interface->display_message("Ops, não tem essa letra!");
       }
-      else if (n_right_guess == 0) game_interface->display_message("Letra já utilizada!");
+      else if (n_right_guess == 0)
+        game_interface->display_message("Letra já utilizada!");
 
-      else game_interface->display_message("Muito bom!");
+      else
+        game_interface->display_message("Muito bom!");
     }
 
     // Guess a word
-    else if (choice == 2)//(choice == 'W' || choice == 'w')
+    else if (choice == 2) //(choice == 'W' || choice == 'w')
     {
       guess = game_interface->guess_word();
 
@@ -85,25 +90,39 @@ int hangman::Game::Round(GameInterface* game_interface)
 
       if (word_guess_points)
       {
-        lost = this->loseLife(word_guess_points);
+        lost = this->loseLife(word_life_lose);
 
         if (lost)
         {
           game_interface->display_message("Palavra errada! " + this->getPlayerName() + " perdeu!");
         }
-        else {
-          game_interface->display_message("Palavra errada! -3 vidas!");
+        else
+        {
+          game_interface->display_message("Palavra errada! -" +
+                                          std::to_string(word_life_lose) + " vidas!");
         }
       }
 
       else
       {
-        game_interface->display_message("Palavra correta!"); 
+        game_interface->display_message("Palavra correta!");
         break;
       }
     }
 
     UpdatePlayerTurn();
+
+    // Right word guess
+    if (word_guess_points == 0)
+    {
+      break;
+    }
+
+    // Only one survivor player
+    if (this->n_players_left_ == 1 && players_amount_ > 1)
+    {
+      break;
+    }
 
     timeout(2000);
     getch();
@@ -162,7 +181,7 @@ int hangman::Game::GuessWord(std::string word)
 
   else
   {
-    return 3;
+    return 1;
   }
 }
 
@@ -194,6 +213,8 @@ void hangman::Game::setPlayersName(std::vector<std::string> names)
 void hangman::Game::setPlayersLife(int amount)
 {
   this->lifes_ = amount;
+  this->letter_life_lose = 1;
+  this->word_life_lose = this->lifes_ / 2;
   for (size_t i = 0; i < this->players_amount_; i++)
   {
     this->game_players_[i]->setLife(this->lifes_);

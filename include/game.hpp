@@ -21,7 +21,7 @@ namespace hangman
         : guess_word_(guess_word), lifes_(lifes), rounds_(rounds),
           players_amount_(players_amount){};
 
-    int Round(GameInterface* game_interface);
+    int Round(GameInterface *game_interface);
 
     int GuessLetter(std::string letter);
 
@@ -69,6 +69,14 @@ namespace hangman
 
     // Amount of players left on the game
     int n_players_left_;
+
+    // Amount of life lost when a letter is wrong
+    // guessed. 
+    int letter_life_lose;
+
+    // Amount of life lost when a word is wrong
+    // guessed. Represents 50% of the total original life.
+    int word_life_lose;
 
     std::vector<hangman::Player *>
         game_players_;

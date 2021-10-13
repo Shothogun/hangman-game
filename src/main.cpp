@@ -4,12 +4,8 @@
 #include <string.h>
 #include "game.hpp"
 
-int main(int argc, char *argv[])
+int main()
 {
-	int key_command;
-	char msg[] = "Just a string";
-	int row, col;
-
 	hangman::Game *g = new hangman::Game();
 
 	std::vector<std::string> names;
@@ -20,32 +16,7 @@ int main(int argc, char *argv[])
 
 	hangman::start_interface(g);
 
-	//g->setPlayerAmount(3);
-	//g->RoundPlayersInit();
-	//g->setPlayersName(names);
-	//g->setPlayersLife();
-	//g->Round();
-
 	delete g;
-	//   while (1)
-	//   {
-	//     initscr();
-
-	//     getmaxyx(stdscr, row, col);
-	//     mvprintw(row / 2, (col - strlen(msg)) / 2, "%s", msg);
-	//     mvprintw(row - 2, 0, "This screen has %d rows and %d columns\n", row, col);
-	//     printw("Try resizing your window(if possible) and then run this program again");
-	//     refresh();
-	//     key_command = getch();
-
-	//     endwin();
-
-	//     // ESC Key
-	//     if (key_command == 27)
-	//     {
-	//       break;
-	//     }
-	//   }
 
 	return 0;
 }
