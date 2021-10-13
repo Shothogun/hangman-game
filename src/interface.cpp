@@ -1,4 +1,4 @@
-#include "interface.hpp"
+#include "../include/interface.hpp"
 
 using namespace std;
 
