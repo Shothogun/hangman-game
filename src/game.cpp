@@ -1,4 +1,5 @@
-#include "game.hpp"
+#include "../include/game.hpp"
+#include "../include/file.hpp"
 
 int hangman::Game::Round(GameInterface *game_interface)
 {
@@ -21,8 +22,8 @@ int hangman::Game::Round(GameInterface *game_interface)
   // Initialize with the 1sr player
   this->player_turn_ = 0;
 
-  // DEBUG
-  this->guess_word_ = "hangman";
+  // Take a random word from the file with all posibly words
+  this->guess_word_ = randomWord(allWords("src/words.txt"));
 
   bool lost = false;
 
@@ -75,8 +76,16 @@ int hangman::Game::Round(GameInterface *game_interface)
       else if (n_right_guess == 0)
         game_interface->display_message("Letra já utilizada!");
 
-      else
-        game_interface->display_message("Muito bom!");
+      else{
+        if(GuessWord(this->render_guess_word))
+        {
+          game_interface->display_message("Muito bom!");
+        }
+        else{
+          game_interface->display_message("Palavra correta!"); 
+          break;
+        }
+      }
     }
 
     // Guess a word

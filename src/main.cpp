@@ -1,8 +1,8 @@
 #include <ncurses.h>
 #include <iostream>
-#include "interface.hpp"
 #include <string.h>
-#include "game.hpp"
+#include "../include/interface.hpp"
+#include "../include/game.hpp"
 
 int main()
 {
