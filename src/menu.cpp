@@ -241,10 +241,13 @@ namespace hangman {
 			}
 		}
 
+		//Disable mouse events
+		mousemask(0, NULL);
+
 		return next_page;
 	}
 
-	// Display and functionality of the initial menu
+	// Display and behaviour of the initial menu
 	int initial_menu(WinData main_box_data){
 		int separation;
 		int ch, next_page = 0;
@@ -326,13 +329,15 @@ namespace hangman {
 			}
 		}
 
+		// Disable mouse events
+		mousemask(0, NULL);
+
 		return next_page;
 	}
 
 
-	// Configuration menu for a new game (display and functionality)
-	int new_game_menu(WinData main_box_data, int *p_n_players, int* p_n_rounds, int* p_n_lifes, vector<string>* names){
-		char ch;
+	// Configuration menu for a new game (display and behaviour)
+	void new_game_menu(WinData main_box_data, int *p_n_players, int* p_n_rounds, int* p_n_lifes, vector<string>* names){
 		int margin_y = 3, margin_x = 2, separation = 3;
 		string str_q1 = "Escreva a quantidade de jogadores: ";
 		string str_q2 = "Escreva a quantidade de rodadas: ";
@@ -362,12 +367,18 @@ namespace hangman {
 		wattron(text.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
 		text.write_center("Tudo configurado! Clique ou aperte qualquer tecla para começar!", 0);
 
+		// Enable mouse events
 		mousemask(ALL_MOUSE_EVENTS, NULL);
-		ch = getch();
 
-		return ch;
+		// Wait for response
+		getch();
+
+		// Disable mouse events
+		mousemask(0, NULL);
+
 	}
 
+	// Interface and behaviour of menu to add a new word to the colection of possible words
 	int new_word_menu(WinData main_box_data){
 
 		int ch = 0, next_page = 0;
@@ -380,7 +391,6 @@ namespace hangman {
 		std::size_t found;
 
 		MEVENT event;
-		mousemask(ALL_MOUSE_EVENTS, NULL);
 
 		// Create the text and wait for response
 		Box text (int(main_box_data.height/4) + main_box_data.starty, main_box_data.startx + 1, 2, main_box_data.width - 2);
@@ -392,12 +402,13 @@ namespace hangman {
 		if (found != string::npos)
 			new_word = new_word.substr(0, found);
 
-		//TODO: insert word in file
+		//Insert word in the words file
+		writeWord(new_word, "src/words.txt");
 
 		// Box with system message
 		Box msg (main_box_data.starty + int(main_box_data.height/2), main_box_data.startx + margin_x, 1, main_box_data.width - margin_y*2);
 		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
-		msg.write_center("Sucesso! Palavra adicionada!", 0);
+		msg.write_center("Sucesso! Palavra '" + new_word + "' adicionada!", 0);
 
 		// Create buttons
 		Box button_back (main_box_data.starty + but_height, int(1*separation/3) + main_box_data.startx, 2, int(separation*1/2));
@@ -408,6 +419,9 @@ namespace hangman {
 		button_back.create_border();
 		button_back.write_center("Voltar ao menu", 0);
 		button_back.write_center("(1)", 1);
+
+		// Allow mouse events
+		mousemask(ALL_MOUSE_EVENTS, NULL);
 
 		// Buttons behavior
 		while(ch != 27){
@@ -442,6 +456,9 @@ namespace hangman {
 					break;
 			}
 		}
+
+		// Disable mouse events
+		mousemask(0, NULL);
 
 		return next_page;
 	}

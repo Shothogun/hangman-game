@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "file.hpp"
 
 using namespace std;
 
@@ -67,7 +68,7 @@ namespace hangman {
 
 	int initial_menu(WinData main_box_data);
 
-	int new_game_menu(WinData main_box_data, int *p_n_players, int* p_n_rounds, int* p_n_lifes, vector<string>* names);
+	void new_game_menu(WinData main_box_data, int *p_n_players, int* p_n_rounds, int* p_n_lifes, vector<string>* names);
 
 	int new_word_menu(WinData main_box_data);
 }
