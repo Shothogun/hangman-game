@@ -465,25 +465,61 @@ namespace hangman {
 
 	int ranking_menu(WinData main_box_data){
 
-		int index, counter = 0, max_rankings = 10;
+		int index, counter = 0, max_rankings;
 		int margin_x = 2, margin_y = 3;
-		int n_columns = 3;
-		int msg_height = int(7*main_box_data.height/8);
+		int column, line, n_columns = 3;
+		int column_width, column_height, column_y;
+		int msg_y = int(7*main_box_data.height/8);
 		int separation = int(main_box_data.width/n_columns);
-		
+		string tmp_str;
 		vector<pair<string, string>> rankings;
+
+		column_height = int(7*main_box_data.height/8) - 2*margin_y + 1;
+		column_width = int(3*separation/4);
+		column_y = main_box_data.starty + margin_y;
+
+		// Boxes of the three columns to display the rankings
+		Box rank_columns [3] = {
+			Box(column_y, main_box_data.startx + int(1*separation/6), column_height, column_width),
+			Box(column_y, main_box_data.startx + int(9*separation/8), column_height, column_width),
+			Box(column_y, main_box_data.startx + int(25*separation/12), column_height, column_width)
+		};
+
+		// TODO: Rankings Title
 
 		// Get rankings
 		rankings = readRanking("src/ranking.txt");
 
+		// Max rankings displayed
+		max_rankings = int(column_height/2) * n_columns;
+
+		line = 0;
+		column = 0;
+		// Display the best ranked players one at a time
 		while(rankings.size() > 0 && counter < max_rankings){
+			// Get the best ranked player
 			index = get_first_rank(rankings);
-			rankings.erase(rankings.begin() + index);
+			// If changing the column, reset line number
+			if (column != int(counter*n_columns/max_rankings)){
+				column = int(counter*n_columns/max_rankings);
+				line = 0;
+			}
+			// Display player data
+			tmp_str = to_string(counter+1) + ". " + rankings[index].first + " - " + rankings[index].second;
+			if (tmp_str.size() > uint(rank_columns[column].width))
+			{
+				tmp_str = tmp_str.substr(0, uint(rank_columns[column].width));
+			}
+			rank_columns[column].write_begin(tmp_str, line);
+			// Update for the next player
+			line += 2;
 			counter++;
+			// Remove the best ranked player
+			rankings.erase(rankings.begin() + index);
 		}
 
 		// System message display
-		Box text (main_box_data.starty + msg_height, main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
+		Box text (main_box_data.starty + msg_y, main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
 		wattron(text.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
 		text.write_center("Clique ou aperte qualquer tecla para voltar!", 0);
 
