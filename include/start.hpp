@@ -1,11 +1,11 @@
-#ifndef INTERFACE_H
-#define INTERFACE_H
+#ifndef START_H
+#define START_H
 
 #include <ncurses.h>
 #include <iostream>
 #include <string>
 #include <vector>
-#include "menu.hpp"
+#include "interfaces.hpp"
 #include "game.hpp"
 
 using namespace std;

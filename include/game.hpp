@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include "player.hpp"
-#include "menu.hpp"
+#include "interfaces.hpp"
 #include <random>
 
 namespace hangman
