@@ -58,6 +58,7 @@ namespace hangman {
 			string guess_word();
 			char guess_letter();
 			void erase_guess();
+			void erase_all();
 			void display_message(string msg);
 			void erase_message();
 			GameInterface(WinData main_box_data);
@@ -78,5 +79,9 @@ namespace hangman {
 	int ranking_menu(WinData main_box_data);
 
 	int get_first_rank(vector<pair<string, string>> rankings);
+
+	void round_winner_screen(WinData main_box_data, string name);
+
+	int game_winner_screen(WinData main_box_data, string name);
 }
 #endif

@@ -111,6 +111,17 @@ namespace hangman {
 		this->initialization(main_box_data);
 	}
 
+	// Erase all windows
+	void GameInterface::erase_all(){
+		this->current_player->erase();
+		this->current_player->refresh();
+		this->cur_word->erase();
+		this->cur_word->refresh();
+		this->erase_buttons();
+		this->erase_guess();
+		this->erase_message();
+	}
+
 	// GameInterface destroyer - delete all windows
 	GameInterface::~GameInterface(){
 		delete this->current_player;
@@ -550,6 +561,103 @@ namespace hangman {
 		}
 
 		return id;
+	}
+
+	int game_winner_screen(WinData main_box_data, string name){
+		int ch = 0, next_page = 0;
+		int n_choices = 2;
+		int margin_x = 2;
+		int but_height = int(3*main_box_data.height/4);
+		int separation = int(main_box_data.width/n_choices);
+
+		MEVENT event;
+
+		// Create the text
+		Box text (int(main_box_data.height/4) + main_box_data.starty, main_box_data.startx + 1, 1, main_box_data.width - 2);
+		wattron(text.win, A_BOLD|A_UNDERLINE);
+		text.write_center("Parabéns " + name + "! Você ganhou essa rodada!", 0);
+
+		// Box with system message
+		Box msg (main_box_data.starty + int(main_box_data.height/2), main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
+		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
+		msg.write_center("Sua pontuação será adicionada ao ranking!", 0);
+
+		// Create buttons
+		Box button_back (main_box_data.starty + but_height, int(1*separation/3) + main_box_data.startx, 2, int(separation*1/2));
+		Box button_again (main_box_data.starty + but_height, int(7*separation/6) + main_box_data.startx, 2, int(separation*1/2));
+		button_again.create_border();
+		button_again.write_center("Jogar novamente", 0);
+		button_again.write_center("(2)", 1);
+		button_back.create_border();
+		button_back.write_center("Voltar ao menu", 0);
+		button_back.write_center("(1)", 1);
+
+		// Allow mouse events
+		mousemask(ALL_MOUSE_EVENTS, NULL);
+
+		// Buttons behavior
+		while(ch != 27){
+			ch = getch();
+			switch(ch){
+				case '1':
+					next_page = MAIN; // Page 0 = main
+					ch = EXIT;
+					break;
+				case '2':
+					next_page = GAME; // Page 1 = play a new game
+					ch = EXIT;
+					break;
+				case KEY_MOUSE:
+					if(getmouse(&event) == OK){
+						if(event.bstate & BUTTON1_PRESSED || event.bstate & BUTTON1_CLICKED){
+							if (button_back.isThisButton(event.x, event.y)){
+								next_page = MAIN;
+								ch = EXIT;
+							}
+							else if (button_again.isThisButton(event.x, event.y)){
+								next_page = GAME;
+								ch = EXIT;
+							}
+						}
+					}
+					break;
+				case EXIT:
+					next_page = EXIT;
+					break;
+				default:
+					break;
+			}
+		}
+
+		// Disable mouse events
+		mousemask(0, NULL);
+
+		return next_page;
+	}
+
+	void round_winner_screen(WinData main_box_data, string name){
+
+		int margin_x = 2;
+		int msg_y = int(7*main_box_data.height/8);
+
+		// Create the winning text
+		Box text (int(main_box_data.height/3) + main_box_data.starty, main_box_data.startx + 1, 1, main_box_data.width - 2);
+		wattron(text.win, A_BOLD|A_UNDERLINE);
+		text.write_center("Parabéns " + name + "! Você ganhou essa rodada!", 0);
+
+		// Box with system message
+		Box msg (main_box_data.starty + msg_y, main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
+		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
+		msg.write_center("Clique ou aperte qualquer tecla para voltar!", 0);
+
+		// Enable mouse events
+		mousemask(ALL_MOUSE_EVENTS, NULL);
+
+		// Wait for response
+		getch();
+
+		// Disable mouse events
+		mousemask(0, NULL);
 	}
 
 }

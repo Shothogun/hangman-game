@@ -142,7 +142,7 @@ int hangman::Game::Round(GameInterface *game_interface)
     //std::cout << "\n\n\n";
   }
 
-  std::cout << this->getPlayerName() << ", U are the WINNER!!! :D\n";
+  //std::cout << this->getPlayerName() << ", U are the WINNER!!! :D\n";
   return this->getPlayerID();
 }
 

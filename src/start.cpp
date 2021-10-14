@@ -48,12 +48,14 @@ namespace hangman {
 					g->RoundPlayersInit();
 					g->setPlayersName(names);
 					g->setPlayersLife(number_lifes);
-
 					g->Round(game_interface);
 
-					//while(page != EXIT){
-					//	page = getch();
-					//}
+					game_interface->erase_all();
+
+					round_winner_screen(main_box_data, "Giordano");
+
+					game_winner_screen(main_box_data, "Giordano");
+
 
 					break;
 				case RANK:
