@@ -4,6 +4,7 @@ using namespace std;
 
 namespace hangman {
 
+	// Box initializer - set starting coordinates and dimensions and create window
 	Box::Box(int starty, int startx, int height, int width) {
 		this->startx = startx;
 		this->starty = starty;
@@ -12,12 +13,14 @@ namespace hangman {
 		this->win = newwin(height+2, width+2, starty-1, startx-1);
 	}
 
+	// Box destructor erase and delete window
 	Box::~Box(){
 		werase(this->win);
 		wrefresh(this->win);
 		delwin(this->win);
 	}
 
+	// Write text message in the center of the box in the line informed
 	void Box::write_center(string str, int line) {
 		if (line < this->height){
 			if (str.size() > uint(this->width)){
@@ -28,6 +31,7 @@ namespace hangman {
 		wrefresh(this->win);
 	}
 
+	// Write text message in the beginning of the box in the line informed
 	void Box::write_begin(string str, int line) {
 		if (line < this->height){
 			if (str.size() > uint(this->width)){
@@ -38,6 +42,7 @@ namespace hangman {
 		wrefresh(this->win);
 	}
 
+	// Wait for a string input from the user in line and position (y, x) of the box
 	string Box::read_str(int line, int position) {
 		char s[80];
 
@@ -49,6 +54,7 @@ namespace hangman {
 		return str;
 	}
 
+	// Wait for a character input from the user in line and position (y, x) of the box
 	char Box::read_char(int line, int position) {
 		char c;
 
@@ -59,11 +65,13 @@ namespace hangman {
 		return c;
 	}
 
+	// Create a border arround the box
 	void Box::create_border() {
 		box(this->win, 0, 0);
 		wrefresh(this->win);
 	}
 
+	// Return if the general coordenates (x, y) are a part of this box
 	int Box::isThisButton(int x, int y) {
 		if (x >= this->startx && x <= this->startx + this->width && y >= this->starty && y <= this->starty + this->height){
 			return 1;
@@ -71,6 +79,7 @@ namespace hangman {
 		else return 0;
 	}
 
+	// Start game interface based on determined main size
 	void GameInterface::initialization(WinData main_box_data){
 		int margin_y = 3, margin_x = 2;
 		int hang_space = 5, hang_height = 6;
@@ -78,8 +87,10 @@ namespace hangman {
 		int separation = int(main_box_data.width/2);
 		int msg_y = 18;
 
+		// Limits the word size to the width of the main box
 		if (this->word_max_size + hang_space*2 > main_box_data.width) this->word_max_size = main_box_data.width - hang_space*2;
 
+		// Create the boxes used
 		this->current_player = new Box(margin_y + main_box_data.starty, main_box_data.startx + margin_x, 2, main_box_data.width - 2*margin_x);
 		this->cur_word = new Box(main_box_data.starty + int((main_box_data.height - hang_height)/2), main_box_data.startx + int(main_box_data.width- this->word_max_size)/2 - hang_space, 
 								 hang_height, this->word_max_size + hang_space*2);
@@ -89,15 +100,18 @@ namespace hangman {
 		this->msg = new Box(main_box_data.starty + msg_y, main_box_data.startx + margin_x, 1, main_box_data.width - 2*margin_x);
 	}
 
+	// GameInterface initializer - calls initialization method based on main size and word max size
 	GameInterface::GameInterface(WinData main_box_data, int word_max_size){
 		this->word_max_size = word_max_size;
 		this->initialization(main_box_data);
 	}
 
+	// GameInterface initializer - calls initialization method based on main size
 	GameInterface::GameInterface(WinData main_box_data){
 		this->initialization(main_box_data);
 	}
 
+	// GameInterface destroyer - delete all windows
 	GameInterface::~GameInterface(){
 		delete this->current_player;
 		delete this->cur_word;
@@ -107,6 +121,7 @@ namespace hangman {
 		delete this->msg;
 	}
 
+	// Display player name and health
 	void GameInterface::display_player(string name, int life){
 		this->current_player->erase();
 		wattron(this->current_player->win, A_BOLD|A_UNDERLINE);
@@ -115,6 +130,7 @@ namespace hangman {
 		this->current_player->write_center("Vidas: " + to_string(life), 1);
 	}
 
+	// Display current state of the guessing word
 	void GameInterface::display_cur_word(string word){
 		this->cur_word->erase();
 		this->cur_word->write_begin("____ ", 0);
@@ -126,12 +142,14 @@ namespace hangman {
 		this->cur_word->write_center(word, 4);
 	}
 
+	// Display message from the game
 	void GameInterface::display_message(string msg){
 		this->msg->erase();
 		wattron(this->msg->win, A_BOLD|A_STANDOUT);
 		this->msg->write_center(msg, 0);
 	}
 
+	// Wait for a charactere guess from the player 
 	char GameInterface::guess_letter(){
 		string s = "Escreva a letra escolhida: ";
 
@@ -141,6 +159,7 @@ namespace hangman {
 		return this->guess->read_char(0, s.size());
 	}
 
+	// Wait for a word guess from the player
 	string GameInterface::guess_word(){
 		string s = "Escreva a palavra escolhida: ";
 
@@ -150,6 +169,7 @@ namespace hangman {
 		return this->guess->read_str(0, s.size());
 	}
 
+	// Display the two buttons
 	void GameInterface::display_buttons(){
 		this->button_word->erase();
 		this->button_letter->erase();
@@ -161,6 +181,7 @@ namespace hangman {
 		button_word->write_center("(2)", 1);
 	}
 
+	// Erase the two buttons
 	void GameInterface::erase_buttons(){
 		this->button_word->erase();
 		this->button_letter->erase();
@@ -168,16 +189,19 @@ namespace hangman {
 		this->button_letter->refresh();
 	}
 
+	// Erase guess box
 	void GameInterface::erase_guess(){
 		this->guess->erase();
 		this->guess->refresh();
 	}
 
+	// Erase message box
 	void GameInterface::erase_message(){
 		this->msg->erase();
 		this->msg->refresh();
 	}
 
+	// Wait the selection of a button
 	int GameInterface::wait_buttons(){
 		int ch = 0, next_page = 0;
 
@@ -220,6 +244,7 @@ namespace hangman {
 		return next_page;
 	}
 
+	// Display and functionality of the initial menu
 	int initial_menu(WinData main_box_data){
 		int separation;
 		int ch, next_page = 0;
@@ -229,11 +254,12 @@ namespace hangman {
 
 		separation = int(main_box_data.width/n_choices) + 1;
 
+		// Create the text
 		Box text (5 + main_box_data.starty, main_box_data.startx + 1, 2, main_box_data.width - 2);
 		wattron(text.win, A_BOLD|A_UNDERLINE);
 		text.write_center("Bem-vindo ao jogo da forca!", 0);
 
-		//write_menu (menu, separation, main_box_data);
+		// Create the buttons
 		Box b1 (15 + main_box_data.starty, int(separation/10) + main_box_data.startx, 2, int(separation*4/5));
 		b1.create_border();
 		b1.write_center("Novo jogo", 0);
@@ -254,45 +280,46 @@ namespace hangman {
 
 		ch = 0;
 		
-		while(ch != 27){
+		// Wait and proceed depending on user action
+		while(ch != EXIT){
 			ch = getch();
 			switch(ch){
 				case '1':
-					next_page = 1;
-					ch = 27;
+					next_page = GAME;
+					ch = EXIT;
 					break;
 				case '2':
-					next_page = 2;
-					ch = 27;
+					next_page = NWORD;
+					ch = EXIT;
 					break;
 				case '3':
 					next_page = 3;
-					ch = 27;
+					ch = EXIT;
 					break;
 				case KEY_MOUSE:
 					if(getmouse(&event) == OK){
 						if(event.bstate & BUTTON1_PRESSED || event.bstate & BUTTON1_CLICKED){
 							if (b1.isThisButton(event.x, event.y)){
 								next_page = 1;
-								ch = 27;
+								ch = EXIT;
 							}
 							else if (b2.isThisButton(event.x, event.y)){
 								next_page = 2;
-								ch = 27;
+								ch = EXIT;
 							}
 							else if(b3.isThisButton(event.x, event.y)){
 								next_page = 3;
-								ch = 27;
+								ch = EXIT;
 							}
 							else if (bexit.isThisButton(event.x, event.y)){
-								next_page = 27;
-								ch = 27;
+								next_page = EXIT;
+								ch = EXIT;
 							}
 						}
 					}
 					break;
-				case 27:
-					next_page = 27;
+				case EXIT:
+					next_page = EXIT;
 					break;
 				default:
 					break;
@@ -302,6 +329,8 @@ namespace hangman {
 		return next_page;
 	}
 
+
+	// Configuration menu for a new game (display and functionality)
 	int new_game_menu(WinData main_box_data, int *p_n_players, int* p_n_rounds, int* p_n_lifes, vector<string>* names){
 		char ch;
 		int margin_y = 3, margin_x = 2, separation = 3;
@@ -310,6 +339,7 @@ namespace hangman {
 		string str_q3 = "Escreva a quantidade de vidas por jogador: ";
 		string str_q4 = "Escreva o nome do jogador ";
 
+		// Create boxes and wait for player to respond
 		Box q1 (margin_y + main_box_data.starty, margin_x + main_box_data.startx, 1, main_box_data.width - margin_y*2);
 		q1.write_begin(str_q1, 0);
 		*p_n_players = stoi(q1.read_str(0, str_q1.size()));
@@ -336,6 +366,84 @@ namespace hangman {
 		ch = getch();
 
 		return ch;
+	}
+
+	int new_word_menu(WinData main_box_data){
+
+		int ch = 0, next_page = 0;
+		int n_choices = 2;
+		int margin_x = 2, margin_y = 3;
+		int but_height = int(3*main_box_data.height/4);
+		int separation = int(main_box_data.width/n_choices);
+		string str = "Escreva a nova palavra: ";
+		string new_word;
+		std::size_t found;
+
+		MEVENT event;
+		mousemask(ALL_MOUSE_EVENTS, NULL);
+
+		// Create the text and wait for response
+		Box text (int(main_box_data.height/4) + main_box_data.starty, main_box_data.startx + 1, 2, main_box_data.width - 2);
+		wattron(text.win, A_BOLD);
+		text.write_begin(str, 0);
+		wattroff(text.win, A_BOLD);
+		new_word = text.read_str(0, str.size());
+		found = new_word.find(' ');
+		if (found != string::npos)
+			new_word = new_word.substr(0, found);
+
+		//TODO: insert word in file
+
+		// Box with system message
+		Box msg (main_box_data.starty + int(main_box_data.height/2), main_box_data.startx + margin_x, 1, main_box_data.width - margin_y*2);
+		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
+		msg.write_center("Sucesso! Palavra adicionada!", 0);
+
+		// Create buttons
+		Box button_back (main_box_data.starty + but_height, int(1*separation/3) + main_box_data.startx, 2, int(separation*1/2));
+		Box button_again (main_box_data.starty + but_height, int(7*separation/6) + main_box_data.startx, 2, int(separation*1/2));
+		button_again.create_border();
+		button_again.write_center("Adicionar outra", 0);
+		button_again.write_center(" palavra (2)", 1);
+		button_back.create_border();
+		button_back.write_center("Voltar ao menu", 0);
+		button_back.write_center("(1)", 1);
+
+		// Buttons behavior
+		while(ch != 27){
+			ch = getch();
+			switch(ch){
+				case '1':
+					next_page = MAIN; // Page 0 = main
+					ch = EXIT;
+					break;
+				case '2':
+					next_page = NWORD; // Page 3 = add word
+					ch = EXIT;
+					break;
+				case KEY_MOUSE:
+					if(getmouse(&event) == OK){
+						if(event.bstate & BUTTON1_PRESSED || event.bstate & BUTTON1_CLICKED){
+							if (button_back.isThisButton(event.x, event.y)){
+								next_page = MAIN;
+								ch = EXIT;
+							}
+							else if (button_again.isThisButton(event.x, event.y)){
+								next_page = NWORD;
+								ch = EXIT;
+							}
+						}
+					}
+					break;
+				case EXIT:
+					next_page = EXIT;
+					break;
+				default:
+					break;
+			}
+		}
+
+		return next_page;
 	}
 
 }

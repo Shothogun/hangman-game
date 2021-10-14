@@ -1,6 +1,11 @@
 #ifndef MENU_H
 #define MENU_H
 
+#define MAIN 0
+#define GAME 1
+#define NWORD 3
+#define EXIT 27
+
 #include <ncurses.h>
 #include <iostream>
 #include <string>
@@ -63,5 +68,7 @@ namespace hangman {
 	int initial_menu(WinData main_box_data);
 
 	int new_game_menu(WinData main_box_data, int *p_n_players, int* p_n_rounds, int* p_n_lifes, vector<string>* names);
+
+	int new_word_menu(WinData main_box_data);
 }
 #endif

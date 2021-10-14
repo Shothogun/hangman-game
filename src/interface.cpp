@@ -5,7 +5,7 @@ using namespace std;
 namespace hangman {
 
 	int start_interface(Game* g){
-		int page = 0;
+		int page = MAIN;
 		int number_players = 1, number_rounds = 1, number_lifes = 1;
 		vector<string> names;
 		WINDOW *main_box;
@@ -27,13 +27,13 @@ namespace hangman {
 		box(main_box, 0 , 0);
 		wrefresh(main_box);
 
-		while(page != 27){
+		while(page != EXIT){
 			GameInterface* game_interface = new GameInterface(main_box_data);
 			switch(page){
-				case 0:
+				case MAIN:
 					page = initial_menu(main_box_data);
 					break;
-				case 1:
+				case GAME:
 					page = new_game_menu(main_box_data, &number_players, &number_rounds, &number_lifes, &names);
 					if(number_players <= 0) number_players = 1;
 					if(number_rounds <= 0) number_rounds = 1;
@@ -46,28 +46,17 @@ namespace hangman {
 
 					g->Round(game_interface);
 
-					/*game_interface.display_player("Giordano", 5);
-					game_interface.display_cur_word("_______");
-					game_interface.display_buttons();
-					game_interface.wait_buttons();
-					game_interface.erase_buttons();
-					game_interface.guess_letter();
-					game_interface.guess_word();
-					game_interface.display_message("Aqui está você, o perdedor HAHA");
-					getch();
-					game_interface.erase_guess();
-					game_interface.erase_message();*/
+					//while(page != EXIT){
+					//	page = getch();
+					//}
 
-
-
-					while(page != 27){
-						page = getch();
-					}
-
+					break;
+				case NWORD:
+					page = new_word_menu(main_box_data);
 					break;
 				default:
 					getch();
-					page = 27;
+					page = EXIT;
 					break;
 			}
 			delete game_interface;
