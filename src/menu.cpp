@@ -292,26 +292,26 @@ namespace hangman {
 					ch = EXIT;
 					break;
 				case '2':
-					next_page = NWORD;
+					next_page = RANK;
 					ch = EXIT;
 					break;
 				case '3':
-					next_page = 3;
+					next_page = NWORD;
 					ch = EXIT;
 					break;
 				case KEY_MOUSE:
 					if(getmouse(&event) == OK){
 						if(event.bstate & BUTTON1_PRESSED || event.bstate & BUTTON1_CLICKED){
 							if (b1.isThisButton(event.x, event.y)){
-								next_page = 1;
+								next_page = GAME;
 								ch = EXIT;
 							}
 							else if (b2.isThisButton(event.x, event.y)){
-								next_page = 2;
+								next_page = RANK;
 								ch = EXIT;
 							}
 							else if(b3.isThisButton(event.x, event.y)){
-								next_page = 3;
+								next_page = NWORD;
 								ch = EXIT;
 							}
 							else if (bexit.isThisButton(event.x, event.y)){
@@ -345,17 +345,17 @@ namespace hangman {
 		string str_q4 = "Escreva o nome do jogador ";
 
 		// Create boxes and wait for player to respond
-		Box q1 (margin_y + main_box_data.starty, margin_x + main_box_data.startx, 1, main_box_data.width - margin_y*2);
+		Box q1 (margin_y + main_box_data.starty, margin_x + main_box_data.startx, 1, main_box_data.width - margin_x*2);
 		q1.write_begin(str_q1, 0);
 		*p_n_players = stoi(q1.read_str(0, str_q1.size()));
-		Box q2 (q1.starty + q1.height + separation, margin_x + main_box_data.startx, 1, main_box_data.width - margin_y*2);
+		Box q2 (q1.starty + q1.height + separation, margin_x + main_box_data.startx, 1, main_box_data.width - margin_x*2);
 		q2.write_begin(str_q2, 0);
 		*p_n_rounds = stoi(q2.read_str(0, str_q2.size()));
-		Box q3 (q2.starty + q2.height + separation, margin_x + main_box_data.startx, 1, main_box_data.width - margin_y*2);
+		Box q3 (q2.starty + q2.height + separation, margin_x + main_box_data.startx, 1, main_box_data.width - margin_x*2);
 		q3.write_begin(str_q3, 0);
 		*p_n_lifes = stoi(q3.read_str(0, str_q3.size()));
 
-		Box q4 (q3.starty + q3.height + separation, margin_x + main_box_data.startx, 1, main_box_data.width - margin_y*2);
+		Box q4 (q3.starty + q3.height + separation, margin_x + main_box_data.startx, 1, main_box_data.width - margin_x*2);
 
 		for (int i = 0; i < *p_n_players; i++){
 			q4.write_begin(str_q4 + to_string(i+1) + " : ", 0);
@@ -363,7 +363,7 @@ namespace hangman {
 			q4.erase();
 		}
 
-		Box text (q4.starty + q4.height + separation-1, margin_x + main_box_data.startx, 1, main_box_data.width - margin_y*2);
+		Box text (q4.starty + q4.height + separation-1, margin_x + main_box_data.startx, 1, main_box_data.width - margin_x*2);
 		wattron(text.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
 		text.write_center("Tudo configurado! Clique ou aperte qualquer tecla para começar!", 0);
 
@@ -383,7 +383,7 @@ namespace hangman {
 
 		int ch = 0, next_page = 0;
 		int n_choices = 2;
-		int margin_x = 2, margin_y = 3;
+		int margin_x = 2;
 		int but_height = int(3*main_box_data.height/4);
 		int separation = int(main_box_data.width/n_choices);
 		string str = "Escreva a nova palavra: ";
@@ -406,7 +406,7 @@ namespace hangman {
 		writeWord(new_word, "src/words.txt");
 
 		// Box with system message
-		Box msg (main_box_data.starty + int(main_box_data.height/2), main_box_data.startx + margin_x, 1, main_box_data.width - margin_y*2);
+		Box msg (main_box_data.starty + int(main_box_data.height/2), main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
 		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
 		msg.write_center("Sucesso! Palavra '" + new_word + "' adicionada!", 0);
 
@@ -461,6 +461,59 @@ namespace hangman {
 		mousemask(0, NULL);
 
 		return next_page;
+	}
+
+	int ranking_menu(WinData main_box_data){
+
+		int index, counter = 0, max_rankings = 10;
+		int margin_x = 2, margin_y = 3;
+		int n_columns = 3;
+		int msg_height = int(7*main_box_data.height/8);
+		int separation = int(main_box_data.width/n_columns);
+		
+		vector<pair<string, string>> rankings;
+
+		// Get rankings
+		rankings = readRanking("src/ranking.txt");
+
+		while(rankings.size() > 0 && counter < max_rankings){
+			index = get_first_rank(rankings);
+			rankings.erase(rankings.begin() + index);
+			counter++;
+		}
+
+		// System message display
+		Box text (main_box_data.starty + msg_height, main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
+		wattron(text.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
+		text.write_center("Clique ou aperte qualquer tecla para voltar!", 0);
+
+		// Enable mouse events
+		mousemask(ALL_MOUSE_EVENTS, NULL);
+
+		// Wait for response
+		getch();
+
+		// Disable mouse events
+		mousemask(0, NULL);
+
+		// Returns to the initial menu
+		return MAIN;
+	}
+
+	// Returns the biggest raking player position in the vector
+	int get_first_rank(vector<pair<string, string>> rankings){
+		int max = numeric_limits<int>::min();
+		int id = -1;
+
+		// Go through the role vector comparing with the biggest pontuation known
+		for (uint i = 0; i < rankings.size(); i++){
+			if (stoi(rankings[i].second) > max) {
+				max = stoi(rankings[i].second);
+				id = i;
+			}
+		}
+
+		return id;
 	}
 
 }

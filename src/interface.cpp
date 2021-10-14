@@ -56,6 +56,9 @@ namespace hangman {
 					//}
 
 					break;
+				case RANK:
+					page = ranking_menu(main_box_data);
+					break;
 				case NWORD:
 					page = new_word_menu(main_box_data);
 					break;

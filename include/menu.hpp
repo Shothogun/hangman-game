@@ -3,6 +3,7 @@
 
 #define MAIN 0
 #define GAME 1
+#define RANK 2
 #define NWORD 3
 #define EXIT 27
 
@@ -10,6 +11,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <utility>
+#include <limits>
 #include "file.hpp"
 
 using namespace std;
@@ -71,5 +74,9 @@ namespace hangman {
 	void new_game_menu(WinData main_box_data, int *p_n_players, int* p_n_rounds, int* p_n_lifes, vector<string>* names);
 
 	int new_word_menu(WinData main_box_data);
+
+	int ranking_menu(WinData main_box_data);
+
+	int get_first_rank(vector<pair<string, string>> rankings);
 }
 #endif
