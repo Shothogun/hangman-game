@@ -11,6 +11,7 @@
 using namespace std;
 
 namespace hangman{
+	// Determine the size of the main frame and the sequence of the screens
 	int start_interface(Game* g);
 }
 

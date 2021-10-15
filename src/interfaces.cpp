@@ -474,6 +474,7 @@ namespace hangman {
 		return next_page;
 	}
 
+	// Menu to display the rankings
 	int ranking_menu(WinData main_box_data){
 
 		int index, counter = 0, max_rankings;
@@ -485,9 +486,9 @@ namespace hangman {
 		string tmp_str;
 		vector<pair<string, string>> rankings;
 
-		column_height = int(7*main_box_data.height/8) - 2*margin_y + 1;
+		column_height = int(7*main_box_data.height/8) - 2*margin_y;
 		column_width = int(3*separation/4);
-		column_y = main_box_data.starty + margin_y;
+		column_y = main_box_data.starty + margin_y + 1;
 
 		// Boxes of the three columns to display the rankings
 		Box rank_columns [3] = {
@@ -496,7 +497,10 @@ namespace hangman {
 			Box(column_y, main_box_data.startx + int(25*separation/12), column_height, column_width)
 		};
 
-		// TODO: Rankings Title
+		// Rankings Title
+		Box title (main_box_data.starty + 1, main_box_data.startx + margin_x, 1, main_box_data.width - 2*margin_x);
+		wattron(title.win, A_BOLD|A_UNDERLINE);
+		title.write_center("Melhores Pontuações", 0);
 
 		// Get rankings
 		rankings = readRanking("src/ranking.txt");
@@ -563,6 +567,7 @@ namespace hangman {
 		return id;
 	}
 
+	// Display game winner screen
 	int game_winner_screen(WinData main_box_data, string name){
 		int ch = 0, next_page = 0;
 		int n_choices = 2;
@@ -640,6 +645,7 @@ namespace hangman {
 		return next_page;
 	}
 
+	// Display round winner screen
 	void round_winner_screen(WinData main_box_data, string name){
 
 		int margin_x = 2;
@@ -670,6 +676,7 @@ namespace hangman {
 		mousemask(0, NULL);
 	}
 
+	// Display round loser screen when only one player is playing
 	void round_loser_screen(WinData main_box_data, string name){
 
 		int margin_x = 2;
