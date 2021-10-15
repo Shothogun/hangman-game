@@ -54,8 +54,9 @@ namespace hangman {
 
 					round_winner_screen(main_box_data, "Giordano");
 
-					game_winner_screen(main_box_data, "Giordano");
+					round_loser_screen(main_box_data, "Giordano");
 
+					page = game_winner_screen(main_box_data, "Giordano");
 
 					break;
 				case RANK:

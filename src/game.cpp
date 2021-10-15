@@ -55,7 +55,7 @@ int hangman::Game::Round(GameInterface *game_interface)
     if (choice == 1)
     {
       guess = std::string(1, game_interface->guess_letter());
-      mvwprintw(stdscr, 0, 0, guess.c_str());
+      //mvwprintw(stdscr, 0, 0, guess.c_str());
 
       n_right_guess = GuessLetter(guess);
 

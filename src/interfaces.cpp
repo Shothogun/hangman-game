@@ -572,10 +572,15 @@ namespace hangman {
 
 		MEVENT event;
 
+		start_color(); // Initiate colors
+  		init_pair(1, COLOR_BLUE, COLOR_BLACK);
+
 		// Create the text
 		Box text (int(main_box_data.height/4) + main_box_data.starty, main_box_data.startx + 1, 1, main_box_data.width - 2);
-		wattron(text.win, A_BOLD|A_UNDERLINE);
-		text.write_center("Parabéns " + name + "! Você ganhou essa rodada!", 0);
+		wattron(text.win, A_BOLD|A_UNDERLINE|COLOR_PAIR(1));
+		text.write_center("Parabéns " + name + "! Você ganhou o jogo!", 0);
+		// Reset text color
+  		wattroff(text.win, COLOR_PAIR(1));
 
 		// Box with system message
 		Box msg (main_box_data.starty + int(main_box_data.height/2), main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
@@ -640,15 +645,50 @@ namespace hangman {
 		int margin_x = 2;
 		int msg_y = int(7*main_box_data.height/8);
 
+		start_color(); // Initiate colors
+  		init_pair(1, COLOR_BLUE, COLOR_BLACK);
+
 		// Create the winning text
 		Box text (int(main_box_data.height/3) + main_box_data.starty, main_box_data.startx + 1, 1, main_box_data.width - 2);
-		wattron(text.win, A_BOLD|A_UNDERLINE);
+		wattron(text.win, A_BOLD|A_UNDERLINE|COLOR_PAIR(1));
 		text.write_center("Parabéns " + name + "! Você ganhou essa rodada!", 0);
+		// Reset text color
+  		wattroff(text.win, COLOR_PAIR(1));
 
 		// Box with system message
 		Box msg (main_box_data.starty + msg_y, main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
 		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
 		msg.write_center("Clique ou aperte qualquer tecla para voltar!", 0);
+
+		// Enable mouse events
+		mousemask(ALL_MOUSE_EVENTS, NULL);
+
+		// Wait for response
+		getch();
+
+		// Disable mouse events
+		mousemask(0, NULL);
+	}
+
+	void round_loser_screen(WinData main_box_data, string name){
+
+		int margin_x = 2;
+		int msg_y = int(7*main_box_data.height/8);
+
+		start_color(); // Initiate colors
+  		init_pair(1, COLOR_RED, COLOR_BLACK);
+
+		// Create the winning text
+		Box text (int(main_box_data.height/3) + main_box_data.starty, main_box_data.startx + 1, 1, main_box_data.width - 2);
+		wattron(text.win, A_BOLD|A_UNDERLINE|COLOR_PAIR(1));
+		text.write_center("Ah não! " + name + ", você perdeu essa rodada!", 0);
+		// Reset text color
+  		wattroff(text.win, COLOR_PAIR(1));
+
+		// Box with system message
+		Box msg (main_box_data.starty + msg_y, main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
+		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
+		msg.write_center("Clique ou aperte qualquer tecla para continuar!", 0);
 
 		// Enable mouse events
 		mousemask(ALL_MOUSE_EVENTS, NULL);

@@ -82,6 +82,8 @@ namespace hangman {
 
 	void round_winner_screen(WinData main_box_data, string name);
 
+	void round_loser_screen(WinData main_box_data, string name);
+
 	int game_winner_screen(WinData main_box_data, string name);
 }
 #endif
