@@ -7,6 +7,8 @@ namespace hangman {
 	int start_interface(Game* g){
 		int page = 0;
 		int number_players = 1, number_rounds = 1, number_lifes = 1;
+		vector<pair<string, string>> ranking = readRanking("src/ranking.txt");
+		vector<pair<int, string>> rankingPoints;
 		vector<string> names;
 		WINDOW *main_box;
 
@@ -38,13 +40,31 @@ namespace hangman {
 					if(number_players <= 0) number_players = 1;
 					if(number_rounds <= 0) number_rounds = 1;
 					if(number_lifes <= 0) number_lifes = 1;
-
 					g->setPlayerAmount(number_players);
 					g->RoundPlayersInit();
 					g->setPlayersName(names);
-					g->setPlayersLife(number_lifes);
 
-					g->Round(game_interface);
+					while(number_rounds--){
+						g->setPlayersLife(number_lifes);
+						g->Round(game_interface);
+					}
+
+					for(int i = 0; i < ranking.size(); i++){
+						rankingPoints.push_back(make_pair(stoi(ranking[i].second), ranking[i].first));
+					}
+					for(int i = 0; i < g->getPlayersAmount(); i++){
+						rankingPoints.push_back(make_pair(g->getGamePlayers()[i]->getPoint(), g->getGamePlayers()[i]->getName()));
+					}
+
+					sort(rankingPoints.begin(), rankingPoints.end());
+					ranking.clear();
+					for(int i = 0 ; i < rankingPoints.size(); i++){
+						ranking.push_back(make_pair(rankingPoints[rankingPoints.size() - 1 - i].second,
+													to_string(rankingPoints[rankingPoints.size() - 1 - i].first)));
+					}
+
+					writeRanking("src/ranking.txt", ranking);
+
 
 					/*game_interface.display_player("Giordano", 5);
 					game_interface.display_cur_word("_______");
