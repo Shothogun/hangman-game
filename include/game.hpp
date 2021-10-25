@@ -44,6 +44,10 @@ namespace hangman
 
     int getPlayerID();
 
+    int getPlayersAmount();
+
+    std::vector<hangman::Player *> getGamePlayers();
+
     // Makes current player lose life
     // Return if lost the turn.
     bool loseLife(int lost_life);

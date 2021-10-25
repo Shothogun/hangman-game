@@ -7,6 +7,7 @@
 #include <vector>
 #include "menu.hpp"
 #include "game.hpp"
+#include "file.hpp"
 
 using namespace std;
 
