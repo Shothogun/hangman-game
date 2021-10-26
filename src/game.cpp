@@ -63,6 +63,7 @@ int hangman::Game::Round(GameInterface *game_interface)
 
       if (n_right_guess == WRONG)
       {
+        this->game_players_[this->player_turn_]->setPoint(this->game_players_[this->player_turn_]->getPoint() - 1);
         lost = false;
         lost = this->loseLife(letter_life_lose);
 
@@ -77,6 +78,7 @@ int hangman::Game::Round(GameInterface *game_interface)
         game_interface->display_message("Letra já utilizada!");
 
       else{
+        this->game_players_[this->player_turn_]->setPoint(this->game_players_[this->player_turn_]->getPoint() + 1);
         if(GuessWord(this->render_guess_word))
         {
           game_interface->display_message("Muito bom!");
@@ -99,6 +101,7 @@ int hangman::Game::Round(GameInterface *game_interface)
 
       if (word_guess_points)
       {
+        this->game_players_[this->player_turn_]->setPoint(this->game_players_[this->player_turn_]->getPoint() - 3);
         lost = this->loseLife(word_life_lose);
 
         if (lost)
@@ -114,6 +117,7 @@ int hangman::Game::Round(GameInterface *game_interface)
 
       else
       {
+        this->game_players_[this->player_turn_]->setPoint(this->game_players_[this->player_turn_]->getPoint() + 3);
         game_interface->display_message("Palavra correta!");
         break;
       }
@@ -254,6 +258,10 @@ int hangman::Game::getPlayerID()
   return this->game_players_[this->player_turn_]->getID();
 }
 
+int hangman::Game::getPlayersAmount(){
+  return this->players_amount_;
+}
+
 void hangman::Game::setPlayerAmount(int amount)
 {
   this->players_amount_ = amount;
@@ -270,4 +278,8 @@ bool hangman::Game::loseLife(int lost_life)
   }
 
   return false;
+}
+
+std::vector<hangman::Player *> hangman::Game::getGamePlayers(){
+  return this->game_players_;
 }
