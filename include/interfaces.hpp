@@ -110,12 +110,12 @@ namespace hangman {
 	int get_first_rank(vector<pair<string, string>> rankings);
 
 	// Display round winner screen
-	void round_winner_screen(WinData main_box_data, string name);
+	void round_winner_screen(WinData main_box_data, string name, int points);
 
 	// Display round loser screen when only one player is playing
 	void round_loser_screen(WinData main_box_data, string name);
 
 	// Display game winner screen
-	int game_winner_screen(WinData main_box_data, string name);
+	int game_winner_screen(WinData main_box_data, string name, int points);
 }
 #endif

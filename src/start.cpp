@@ -12,6 +12,8 @@ namespace hangman {
 		vector<pair<int, string>> rankingPoints;
 		vector<string> names;
 		WINDOW *main_box;
+		string winner_name;
+		int winner_points;
 
 		// Main frame size and position
 		WinData main_box_data;
@@ -50,11 +52,25 @@ namespace hangman {
 					g->setPlayersName(names);
 
 					while(number_rounds--){
-						g->setPlayersLife(number_lifes);
+						g->RoundPlayersSoftReset(number_lifes);
 						g->Round(game_interface);
+						rankingPoints.clear();
+						for(int i = 0; i < g->getPlayersAmount(); i++){
+							rankingPoints.push_back(make_pair(g->getGamePlayers()[i]->getPoint(), g->getGamePlayers()[i]->getName()));
+						}
+						sort(rankingPoints.begin(), rankingPoints.end());
+						winner_name = rankingPoints[0].second;
+						winner_points = rankingPoints[0].first;
+
+						// Round ending screens
+						if (g->getPlayersAmount() == 1 && g->getGamePlayers()[0]->getRoundLost()){
+							round_loser_screen(main_box_data, winner_name);
+						}
+						round_winner_screen(main_box_data, winner_name, winner_points);
 					}
 
-					for(int i = 0; i < ranking.size(); i++){
+					rankingPoints.clear();
+					for(uint i = 0; i < ranking.size(); i++){
 						rankingPoints.push_back(make_pair(stoi(ranking[i].second), ranking[i].first));
 					}
 					for(int i = 0; i < g->getPlayersAmount(); i++){
@@ -63,21 +79,16 @@ namespace hangman {
 
 					sort(rankingPoints.begin(), rankingPoints.end());
 					ranking.clear();
-					for(int i = 0 ; i < rankingPoints.size(); i++){
+					for(uint i = 0 ; i < rankingPoints.size(); i++){
 						ranking.push_back(make_pair(rankingPoints[rankingPoints.size() - 1 - i].second,
 													to_string(rankingPoints[rankingPoints.size() - 1 - i].first)));
 					}
 
 					writeRanking("src/ranking.txt", ranking);
 
-
 					game_interface->erase_all();
 
-					round_winner_screen(main_box_data, "Giordano");
-
-					round_loser_screen(main_box_data, "Giordano");
-
-					page = game_winner_screen(main_box_data, "Giordano");
+					page = game_winner_screen(main_box_data, winner_name, winner_points);
 
 					break;
 				case RANK:

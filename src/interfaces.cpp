@@ -568,7 +568,7 @@ namespace hangman {
 	}
 
 	// Display game winner screen
-	int game_winner_screen(WinData main_box_data, string name){
+	int game_winner_screen(WinData main_box_data, string name, int points){
 		int ch = 0, next_page = 0;
 		int n_choices = 2;
 		int margin_x = 2;
@@ -590,7 +590,7 @@ namespace hangman {
 		// Box with system message
 		Box msg (main_box_data.starty + int(main_box_data.height/2), main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
 		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
-		msg.write_center("Sua pontuação será adicionada ao ranking!", 0);
+		msg.write_center("Sua pontuação (" + to_string(points) + ") será adicionada ao ranking!", 0);
 
 		// Create buttons
 		Box button_back (main_box_data.starty + but_height, int(1*separation/3) + main_box_data.startx, 2, int(separation*1/2));
@@ -646,7 +646,7 @@ namespace hangman {
 	}
 
 	// Display round winner screen
-	void round_winner_screen(WinData main_box_data, string name){
+	void round_winner_screen(WinData main_box_data, string name, int points){
 
 		int margin_x = 2;
 		int msg_y = int(7*main_box_data.height/8);
@@ -657,14 +657,14 @@ namespace hangman {
 		// Create the winning text
 		Box text (int(main_box_data.height/3) + main_box_data.starty, main_box_data.startx + 1, 1, main_box_data.width - 2);
 		wattron(text.win, A_BOLD|A_UNDERLINE|COLOR_PAIR(1));
-		text.write_center("Parabéns " + name + "! Você ganhou essa rodada!", 0);
+		text.write_center("Parabéns " + name + "! Você está ganhando com " + to_string(points) + " pontos !", 0);
 		// Reset text color
   		wattroff(text.win, COLOR_PAIR(1));
 
 		// Box with system message
 		Box msg (main_box_data.starty + msg_y, main_box_data.startx + margin_x, 1, main_box_data.width - margin_x*2);
 		wattron(msg.win, A_BOLD|A_UNDERLINE|A_STANDOUT);
-		msg.write_center("Clique ou aperte qualquer tecla para voltar!", 0);
+		msg.write_center("Clique ou aperte qualquer tecla para continuar!", 0);
 
 		// Enable mouse events
 		mousemask(ALL_MOUSE_EVENTS, NULL);

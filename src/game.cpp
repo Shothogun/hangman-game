@@ -146,6 +146,8 @@ int hangman::Game::Round(GameInterface *game_interface)
     //std::cout << "\n\n\n";
   }
 
+  game_interface->erase_all();
+
   //std::cout << this->getPlayerName() << ", U are the WINNER!!! :D\n";
   return this->getPlayerID();
 }
@@ -212,6 +214,15 @@ void hangman::Game::RoundPlayersInit()
     this->game_players_[i]->setPoint(0);
     this->game_players_[i]->setRoundLost(false);
     this->game_players_[i]->setID(dist(mt));
+  }
+}
+
+void hangman::Game::RoundPlayersSoftReset(int number_lifes)
+{
+  for (size_t i = 0; i < this->players_amount_; i++)
+  {
+    this->setPlayersLife(number_lifes);
+    this->game_players_[i]->setRoundLost(false);
   }
 }
 

@@ -29,6 +29,7 @@ namespace hangman
     void setPlayerAmount(int amount);
 
     void RoundPlayersInit();
+    void RoundPlayersSoftReset(int number_lifes);
     void setPlayersName(std::vector<std::string> names);
     void setPlayersLife(int amount);
 
