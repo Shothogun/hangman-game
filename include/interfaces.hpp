@@ -61,7 +61,7 @@ namespace hangman {
 			Box *msg; // Box to show the system message
 
 			// Display player name and health
-			void display_player(string name, int life);
+			void display_player(string name, int life, int points);
 			// Display current state of the guessing word
 			void display_cur_word (string word);
 			// Display the two buttons

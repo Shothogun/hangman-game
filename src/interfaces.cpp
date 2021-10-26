@@ -91,7 +91,7 @@ namespace hangman {
 		if (this->word_max_size + hang_space*2 > main_box_data.width) this->word_max_size = main_box_data.width - hang_space*2;
 
 		// Create the boxes used
-		this->current_player = new Box(margin_y + main_box_data.starty, main_box_data.startx + margin_x, 2, main_box_data.width - 2*margin_x);
+		this->current_player = new Box(margin_y + main_box_data.starty, main_box_data.startx + margin_x, 3, main_box_data.width - 2*margin_x);
 		this->cur_word = new Box(main_box_data.starty + int((main_box_data.height - hang_height)/2), main_box_data.startx + int(main_box_data.width- this->word_max_size)/2 - hang_space, 
 								 hang_height, this->word_max_size + hang_space*2);
 		this->button_letter = new Box(main_box_data.starty + but_height, int(1*separation/3) + main_box_data.startx, 2, int(separation*1/2));
@@ -132,13 +132,14 @@ namespace hangman {
 		delete this->msg;
 	}
 
-	// Display player name and health
-	void GameInterface::display_player(string name, int life){
+	// Display player name, health and points
+	void GameInterface::display_player(string name, int life, int points){
 		this->current_player->erase();
 		wattron(this->current_player->win, A_BOLD|A_UNDERLINE);
 		this->current_player->write_center(name, 0);
 		wattroff(this->current_player->win, A_UNDERLINE);
 		this->current_player->write_center("Vidas: " + to_string(life), 1);
+		this->current_player->write_center("Pontos: " + to_string(points), 2);
 	}
 
 	// Display current state of the guessing word

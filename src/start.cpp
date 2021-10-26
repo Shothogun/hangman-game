@@ -43,6 +43,7 @@ namespace hangman {
 					page = initial_menu(main_box_data);
 					break;
 				case GAME:
+					names.clear();
 					new_game_menu(main_box_data, &number_players, &number_rounds, &number_lifes, &names);
 					if(number_players <= 0) number_players = 1;
 					if(number_rounds <= 0) number_rounds = 1;
@@ -55,18 +56,23 @@ namespace hangman {
 						g->RoundPlayersSoftReset(number_lifes);
 						g->Round(game_interface);
 						rankingPoints.clear();
+
 						for(int i = 0; i < g->getPlayersAmount(); i++){
 							rankingPoints.push_back(make_pair(g->getGamePlayers()[i]->getPoint(), g->getGamePlayers()[i]->getName()));
 						}
+
 						sort(rankingPoints.begin(), rankingPoints.end());
-						winner_name = rankingPoints[0].second;
-						winner_points = rankingPoints[0].first;
+
+						winner_name = rankingPoints[rankingPoints.size()-1].second;
+						winner_points = rankingPoints[rankingPoints.size()-1].first;
 
 						// Round ending screens
+						// If solo player lost the round
 						if (g->getPlayersAmount() == 1 && g->getGamePlayers()[0]->getRoundLost()){
 							round_loser_screen(main_box_data, winner_name);
 						}
-						round_winner_screen(main_box_data, winner_name, winner_points);
+						else
+							round_winner_screen(main_box_data, winner_name, winner_points);
 					}
 
 					rankingPoints.clear();

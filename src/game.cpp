@@ -40,7 +40,7 @@ int hangman::Game::Round(GameInterface *game_interface)
   // If there's still players left and no one guessed the word
   while (1)
   {
-    game_interface->display_player(this->getPlayerName(), this->getPlayerLife());
+    game_interface->display_player(this->getPlayerName(), this->getPlayerLife(), this->getPlayerPoint());
 
     game_interface->display_cur_word(this->render_guess_word);
 
@@ -123,7 +123,13 @@ int hangman::Game::Round(GameInterface *game_interface)
       }
     }
 
-    UpdatePlayerTurn();
+    // If the solo player lost, leave; else update player turn
+    if (this->n_players_left_ == 0 && players_amount_ == 1)
+    {
+      break;
+    }
+    else
+      UpdatePlayerTurn();
 
     // Right word guess
     if (word_guess_points == 0)
@@ -131,11 +137,12 @@ int hangman::Game::Round(GameInterface *game_interface)
       break;
     }
 
-    // Only one survivor player
+    // If only one survivor player of many, leave
     if (this->n_players_left_ == 1 && players_amount_ > 1)
     {
       break;
     }
+
 
     timeout(2000);
     getch();
@@ -202,6 +209,7 @@ int hangman::Game::GuessWord(std::string word)
 
 void hangman::Game::RoundPlayersInit()
 {
+  this->game_players_.clear();
   for (size_t i = 0; i < this->players_amount_; i++)
   {
     hangman::Player *p = new Player();
@@ -267,6 +275,11 @@ int hangman::Game::getPlayerLife()
 int hangman::Game::getPlayerID()
 {
   return this->game_players_[this->player_turn_]->getID();
+}
+
+int hangman::Game::getPlayerPoint()
+{
+  return this->game_players_[this->player_turn_]->getPoint();
 }
 
 int hangman::Game::getPlayersAmount(){

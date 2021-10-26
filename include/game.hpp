@@ -45,6 +45,8 @@ namespace hangman
 
     int getPlayerID();
 
+    int getPlayerPoint();
+
     int getPlayersAmount();
 
     std::vector<hangman::Player *> getGamePlayers();
