@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include "player.hpp"
-#include "menu.hpp"
+#include "interfaces.hpp"
 #include <random>
 
 namespace hangman
@@ -29,6 +29,7 @@ namespace hangman
     void setPlayerAmount(int amount);
 
     void RoundPlayersInit();
+    void RoundPlayersSoftReset(int number_lifes);
     void setPlayersName(std::vector<std::string> names);
     void setPlayersLife(int amount);
 
@@ -43,6 +44,8 @@ namespace hangman
     int getPlayerLife();
 
     int getPlayerID();
+
+    int getPlayerPoint();
 
     int getPlayersAmount();
 
